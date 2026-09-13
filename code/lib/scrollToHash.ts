@@ -46,6 +46,17 @@ export function scrollToTop() {
   });
 }
 
+/** Hash-only home sections become `/#id` when the reader is on another page. */
+export function homeSectionHref(href: string, pathname: string) {
+  if (!href.startsWith("#")) return href;
+  return pathname === "/" ? href : `/${href}`;
+}
+
+export function isHomeSectionHash(hash: string) {
+  const id = hash.replace("#", "");
+  return Boolean(id) && id !== "top";
+}
+
 export function scrollToHash(hash: string) {
   const id = hash.replace("#", "");
   const target = document.getElementById(id);

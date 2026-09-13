@@ -3,7 +3,15 @@
 import { useInView } from "@/lib/useInView";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
-const SPOTLIGHTS = [
+export type FeatureItem = {
+  eyebrow: string;
+  title: string;
+  body: string;
+  alt: string;
+  image: string;
+};
+
+const SPOTLIGHTS: FeatureItem[] = [
   {
     eyebrow: "Grounded in reality",
     title: "Built from real interviews.",
@@ -31,7 +39,7 @@ function FeatureRow({
   item,
   index,
 }: {
-  item: (typeof SPOTLIGHTS)[number];
+  item: FeatureItem;
   index: number;
 }) {
   const { ref, inView } = useInView<HTMLDivElement>(0.25, "0px 0px -12% 0px");
@@ -79,10 +87,16 @@ function FeatureRow({
   );
 }
 
-export default function Features() {
+export default function Features({
+  id,
+  items = SPOTLIGHTS,
+}: {
+  id?: string;
+  items?: FeatureItem[];
+}) {
   return (
-    <section className="relative flex flex-col">
-      {SPOTLIGHTS.map((item, index) => (
+    <section id={id} className="relative flex flex-col">
+      {items.map((item, index) => (
         <FeatureRow key={item.title} item={item} index={index} />
       ))}
     </section>

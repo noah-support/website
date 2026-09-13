@@ -177,7 +177,7 @@ export default function Problem() {
 
   return (
     <section id="problem" className="relative">
-      <div ref={wrapperRef} className="relative h-screen overflow-hidden">
+      <div ref={wrapperRef} className="relative h-[100dvh] overflow-hidden">
         <div
           ref={stageARef}
           className="absolute inset-0 flex items-center justify-center px-6 text-center"
@@ -200,13 +200,13 @@ export default function Problem() {
 
         <div
           ref={stageCRef}
-          className="absolute inset-0 flex flex-col items-center justify-center gap-10 px-6 py-24 sm:gap-14"
+          className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-5 pt-24 pb-28 sm:gap-14 sm:px-6 sm:py-24"
           style={{ perspective: "1400px" }}
         >
-          <h2 className="max-w-3xl text-center font-display text-3xl leading-tight tracking-tight sm:text-4xl">
+          <h2 className="max-w-3xl text-center font-display text-[1.65rem] leading-tight tracking-tight sm:text-4xl">
             {STAGE_C_TEXT}
           </h2>
-          <div className="grid w-full max-w-5xl gap-6 sm:grid-cols-2 sm:gap-8">
+          <div className="grid w-full max-w-5xl gap-3 sm:grid-cols-2 sm:gap-8">
             <div ref={paneDiyRef}>
               <OptionPane title="DIY" cons={DIY_CONS} />
             </div>
@@ -245,15 +245,15 @@ function OptionPanes() {
 
 function OptionPane({ title, cons }: { title: string; cons: string[] }) {
   return (
-    <GlassPane tilt className="h-full p-8 text-left sm:p-10">
-      <p className="font-display text-2xl tracking-tight sm:text-3xl">
+    <GlassPane tilt className="h-full p-5 text-left sm:p-10">
+      <p className="font-display text-xl tracking-tight sm:text-3xl">
         {title}
       </p>
-      <ul className="mt-6 flex flex-col gap-3">
+      <ul className="mt-3 flex flex-col gap-1.5 sm:mt-6 sm:gap-3">
         {cons.map((con) => (
           <li
             key={con}
-            className="flex items-start gap-3 font-body text-sm text-noah-ink-dim sm:text-base"
+            className="flex items-start gap-2 font-body text-[13px] leading-snug text-noah-ink-dim sm:gap-3 sm:text-base"
           >
             <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-noah-orange" />
             {con}

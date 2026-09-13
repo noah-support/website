@@ -42,19 +42,29 @@ function KpiCard({ label, value }: { label: string; value: string }) {
   );
 }
 
-export default function HeroKpi() {
+type HeroKpiProps = {
+  moneyStart?: number;
+  hoursStart?: number;
+  alerts?: string[];
+};
+
+export default function HeroKpi({
+  moneyStart = 482000,
+  hoursStart = 1240,
+  alerts = ALERTS,
+}: HeroKpiProps) {
   const reducedMotion = useReducedMotion();
-  const money = useLiveCounter(482000, { reduced: reducedMotion });
-  const hours = useLiveCounter(1240, { reduced: reducedMotion });
+  const money = useLiveCounter(moneyStart, { reduced: reducedMotion });
+  const hours = useLiveCounter(hoursStart, { reduced: reducedMotion });
   const [alertIndex, setAlertIndex] = useState(0);
 
   useEffect(() => {
     if (reducedMotion) return;
     const id = window.setInterval(() => {
-      setAlertIndex((i) => (i + 1) % ALERTS.length);
+      setAlertIndex((i) => (i + 1) % alerts.length);
     }, 4800);
     return () => window.clearInterval(id);
-  }, [reducedMotion]);
+  }, [reducedMotion, alerts.length]);
 
   return (
     <div className="flex w-full max-w-md flex-col gap-3 sm:gap-4">
@@ -78,7 +88,7 @@ export default function HeroKpi() {
           key={alertIndex}
           className="alert-fade-in font-body text-[13px] leading-snug text-noah-ink"
         >
-          {ALERTS[alertIndex]}
+          {alerts[alertIndex]}
         </p>
       </GlassPane>
     </div>

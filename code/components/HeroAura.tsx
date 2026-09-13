@@ -98,11 +98,11 @@ export default function HeroAura({ speak }: HeroAuraProps) {
   }, []);
 
   return (
-    <div className="pointer-events-none relative mx-auto sm:absolute sm:left-1/2 sm:top-1/2 sm:z-[5] sm:-translate-x-1/2 sm:-translate-y-1/2">
+    <div className="pointer-events-none relative mx-auto lg:absolute lg:left-1/2 lg:top-1/2 lg:z-[5] lg:-translate-x-1/2 lg:-translate-y-1/2">
       <Aura
         agentState={state}
         getOutputVolume={getOutputVolume}
-        className="h-[min(72vw,17rem)] w-[min(72vw,17rem)] sm:h-[min(92vw,86vh)] sm:w-[min(92vw,86vh)]"
+        className="h-[min(72vw,17rem)] w-[min(72vw,17rem)] lg:h-[min(92vw,86vh)] lg:w-[min(92vw,86vh)]"
       />
     </div>
   );

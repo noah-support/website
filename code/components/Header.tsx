@@ -8,16 +8,11 @@ import { scrollToTop } from "@/lib/scrollToHash";
 
 const NAV_ITEMS = [
   { label: "Home", href: "/" },
-  { label: "Industries", href: "/industries" },
+  { label: "Industries", href: "/industry" },
   { label: "About us", href: "/about" },
-  { label: "Blog", href: "/blog" },
-  { label: "Documentation", href: "/documentation" },
-];
-
-const MENU_ACTIONS = [
-  { label: "Login", href: "/login" },
-  { label: "Register", href: "/register" },
-  { label: "Questions?", href: "/contact" },
+  { label: "Knowledge", href: "/knowledge" },
+  { label: "Questions", href: "/contact" },
+  { label: "Jobs", href: "/jobs" },
 ];
 
 export default function Header() {
@@ -91,11 +86,11 @@ export default function Header() {
       <div
         id="site-menu"
         aria-hidden={!open}
-        className={`fixed inset-0 z-40 flex flex-col justify-center bg-noah-cream px-6 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:px-16 ${
+        className={`fixed inset-0 z-40 flex flex-col bg-noah-cream px-6 pb-6 pt-24 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:px-16 sm:pb-8 ${
           open ? "translate-y-0" : "-translate-y-full"
         }`}
       >
-        <nav className="flex flex-col gap-1">
+        <nav className="flex flex-1 flex-col justify-center gap-1 overflow-y-auto">
           {NAV_ITEMS.map((item, index) => (
             <Link
               key={item.href}
@@ -108,29 +103,18 @@ export default function Header() {
                 }
               }}
               tabIndex={open ? 0 : -1}
-              className="group flex items-baseline gap-4 border-b border-noah-ink-hairline py-3 font-display text-[13vw] leading-[0.95] tracking-tight text-noah-ink transition-colors hover:text-noah-orange sm:text-[6vw]"
+              className="group flex items-start gap-3 border-b border-noah-ink-hairline py-2 font-display text-[8vw] leading-[1.08] tracking-tight text-noah-ink transition-colors hover:text-noah-orange sm:items-baseline sm:gap-4 sm:py-2.5 sm:text-[4.4vw] sm:leading-[1.05]"
               style={{ transitionDelay: open ? `${index * 40}ms` : "0ms" }}
             >
-              <span className="font-body text-xs text-noah-ink-dim">
+              <span className="mt-[0.42em] shrink-0 font-body text-xs text-noah-ink-dim sm:mt-0">
                 0{index + 1}
               </span>
-              {item.label}
+              <span className="min-w-0 whitespace-normal text-balance">
+                {item.label}
+              </span>
             </Link>
           ))}
         </nav>
-        <div className="mt-10 flex flex-wrap items-center gap-3">
-          {MENU_ACTIONS.map((action) => (
-            <Link
-              key={action.href}
-              href={action.href}
-              tabIndex={open ? 0 : -1}
-              onClick={() => setOpen(false)}
-              className="glass glass-pill flex h-12 w-fit items-center px-6 text-sm font-medium tracking-[0.01em] text-noah-ink transition-colors hover:text-noah-orange sm:h-14 sm:px-8"
-            >
-              {action.label}
-            </Link>
-          ))}
-        </div>
       </div>
     </>
   );

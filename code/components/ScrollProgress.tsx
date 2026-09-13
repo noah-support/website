@@ -11,8 +11,9 @@ export default function ScrollProgress() {
   const fillRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const fill = fillRef.current;
-    if (!fill) return;
+    const fillNode = fillRef.current;
+    if (!fillNode) return;
+    const fill: HTMLDivElement = fillNode;
 
     function update() {
       const max =

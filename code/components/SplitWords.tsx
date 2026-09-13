@@ -12,7 +12,7 @@ export default function SplitWords({
 }: {
   text: string;
   className?: string;
-  as?: "h2" | "blockquote" | "p";
+  as?: "h1" | "h2" | "blockquote" | "p";
 }) {
   const words = text.split(" ");
   return (

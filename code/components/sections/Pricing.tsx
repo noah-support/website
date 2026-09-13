@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useLayoutEffect, useRef } from "react";
 import { gsap } from "@/lib/gsap";
+import { COMPANY } from "@/lib/company";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import GlassPane from "@/components/GlassPane";
 
@@ -43,7 +44,7 @@ const PLANS = [
       "Customizable interviews & output",
     ],
     cta: "Contact us",
-    href: "/contact",
+    href: "/industry/agencies",
     highlighted: false,
   },
 ];
@@ -117,15 +118,27 @@ export default function Pricing() {
         </p>
       </div>
       <div
-        className="grid w-full max-w-6xl gap-6 sm:grid-cols-3 sm:gap-8"
+        className="grid w-full max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3"
         style={{ perspective: "1400px" }}
       >
-        {PLANS.map((plan) => (
-          <div data-plan key={plan.name} className="h-full">
+        {PLANS.map((plan, index) => (
+          <div
+            data-plan
+            key={plan.name}
+            className={`h-full ${index === 2 ? "sm:col-span-2 lg:col-span-1" : ""}`}
+          >
             <PricingCard {...plan} />
           </div>
         ))}
       </div>
+      <a
+        href={COMPANY.demoUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="font-body text-sm text-noah-ink underline decoration-noah-ink-hairline underline-offset-4 transition-colors hover:text-noah-orange hover:decoration-noah-orange"
+      >
+        {COMPANY.demoLabel}
+      </a>
     </section>
   );
 }

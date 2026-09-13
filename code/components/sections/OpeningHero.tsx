@@ -13,12 +13,13 @@ import HeroKpi from "@/components/HeroKpi";
 import HeroAura from "@/components/HeroAura";
 import ScrollCue from "@/components/ScrollCue";
 import SplitWords from "@/components/SplitWords";
-import { scrollToHash } from "@/lib/scrollToHash";
+import { isHomeSectionHash, scrollToHash } from "@/lib/scrollToHash";
 
 const OPENING_QUOTE = "“You're either growing or you're dying.”";
 
 export default function OpeningHero() {
   const [revealed, setRevealed] = useState(false);
+  const [fromHash, setFromHash] = useState(false);
   const [clip, setClip] = useState<string | null>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
   const openingRef = useRef<HTMLDivElement>(null);
@@ -83,23 +84,67 @@ export default function OpeningHero() {
     };
   }, [reducedMotion]);
 
+  useLayoutEffect(() => {
+    const hash = window.location.hash;
+    if (!isHomeSectionHash(hash)) return;
+    setFromHash(true);
+    setRevealed(true);
+    const id = window.setTimeout(() => scrollToHash(hash), 320);
+    return () => window.clearTimeout(id);
+  }, []);
+
   useEffect(() => {
     if (revealed) return;
     function onMove(event: PointerEvent) {
       if (!cursorRef.current) return;
       cursorRef.current.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0) translate(-50%, -50%)`;
     }
-    // A reader can also just scroll past the quote instead of clicking it —
-    // without this, the fixed custom cursor would keep tracking the pointer
-    // over every section for the rest of the page.
-    function onScroll() {
-      if (window.scrollY > 40) reveal();
-    }
     window.addEventListener("pointermove", onMove);
-    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("pointermove", onMove);
+  }, [revealed]);
+
+  useEffect(() => {
+    if (revealed) return;
+
+    const html = document.documentElement;
+    html.classList.add("noah-gate");
+    window.scrollTo(0, 0);
+
+    function onKey(event: KeyboardEvent) {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        reveal({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
+        return;
+      }
+      if (
+        event.key === "ArrowDown" ||
+        event.key === "ArrowUp" ||
+        event.key === "PageDown" ||
+        event.key === "PageUp" ||
+        event.key === "Home" ||
+        event.key === "End"
+      ) {
+        event.preventDefault();
+      }
+    }
+
+    function preventScroll(event: Event) {
+      const target = event.target;
+      if (target instanceof Node) {
+        const menu = document.getElementById("site-menu");
+        if (menu?.contains(target)) return;
+      }
+      event.preventDefault();
+    }
+
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("wheel", preventScroll, { passive: false });
+    window.addEventListener("touchmove", preventScroll, { passive: false });
     return () => {
-      window.removeEventListener("pointermove", onMove);
-      window.removeEventListener("scroll", onScroll);
+      html.classList.remove("noah-gate");
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("wheel", preventScroll);
+      window.removeEventListener("touchmove", preventScroll);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [revealed]);
@@ -123,26 +168,26 @@ export default function OpeningHero() {
       id="top"
       className={`relative flex w-full flex-col ${
         revealed
-          ? "min-h-[100dvh] sm:h-screen sm:items-end sm:overflow-hidden"
-          : "h-screen overflow-hidden"
+          ? "min-h-[100dvh] lg:h-[100dvh] lg:items-end lg:overflow-hidden"
+          : "h-[100dvh] overflow-hidden"
       }`}
     >
       {/* Hero layer — always mounted, revealed once the quote gate lifts,
           then dissolved by the pin above as the next section takes over. */}
       <div
         ref={fadeRef}
-        className="flex min-h-[100dvh] flex-col sm:absolute sm:inset-0"
+        className="flex min-h-[100dvh] flex-col lg:absolute lg:inset-0"
       >
-        <div className="flex shrink-0 justify-center pt-24 sm:contents">
-          <HeroAura speak={revealed} />
+        <div className="flex shrink-0 justify-center pt-24 lg:contents">
+          <HeroAura speak={revealed && !fromHash} />
         </div>
 
         <div
-          className={`relative z-10 flex w-full flex-col px-6 pb-16 pt-6 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] sm:h-full sm:justify-end sm:px-16 sm:pb-20 sm:pt-0 ${
+          className={`relative z-10 flex w-full flex-col px-6 pb-16 pt-6 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] sm:px-16 sm:pb-20 lg:h-full lg:justify-end lg:pt-0 ${
             revealed ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
           }`}
         >
-          <div className="flex flex-col items-start gap-12 sm:flex-row sm:items-end sm:justify-between">
+          <div className="flex flex-col items-start gap-12 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-xl text-left">
               <p className="font-body text-xs uppercase tracking-[0.2em] text-noah-ink-dim">
                 Process intelligence, one department at a time
@@ -178,7 +223,7 @@ export default function OpeningHero() {
         ref={openingRef}
         onClick={handleClick}
         aria-hidden={revealed}
-        className={`absolute inset-0 z-20 flex flex-col items-center justify-center px-6 text-center transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        className={`absolute inset-0 z-20 flex flex-col items-center justify-center px-6 text-center overscroll-none touch-none transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
           revealed
             ? "pointer-events-none opacity-0"
             : `cursor-pointer bg-noah-cream opacity-100 ${

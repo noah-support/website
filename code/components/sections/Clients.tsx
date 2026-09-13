@@ -4,7 +4,13 @@ import { useEffect, useRef } from "react";
 import GlassPane from "@/components/GlassPane";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
-const TESTIMONIALS = [
+export type Testimonial = {
+  quote: string;
+  role: string;
+  org: string;
+};
+
+const TESTIMONIALS: Testimonial[] = [
   {
     quote:
       "We had a mapped, priced business case for our finance department before our usual vendor had finished the discovery call.",
@@ -32,22 +38,27 @@ const TESTIMONIALS = [
 ];
 
 const COPIES = 3;
-const LOOP = Array.from({ length: COPIES }, (_, copy) =>
-  TESTIMONIALS.map((item, index) => ({
-    ...item,
-    key: `${copy}-${index}`,
-  }))
-).flat();
 
-export default function Clients() {
+export default function Clients({
+  id = "clients",
+  eyebrow = "Clients",
+  title = "Teams already changing how they work.",
+  testimonials = TESTIMONIALS,
+}: {
+  id?: string;
+  eyebrow?: string;
+  title?: string;
+  testimonials?: Testimonial[];
+}) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const wrappingRef = useRef(false);
   const reducedMotion = useReducedMotion();
 
   useEffect(() => {
-    const scroller = scrollerRef.current;
-    if (!scroller) return;
+    const scrollerNode = scrollerRef.current;
+    if (!scrollerNode) return;
+    const scroller: HTMLDivElement = scrollerNode;
 
     function stride() {
       const first = cardRefs.current[0];
@@ -58,7 +69,7 @@ export default function Clients() {
     }
 
     function setWidth() {
-      return stride() * TESTIMONIALS.length;
+      return stride() * testimonials.length;
     }
 
     function wrap() {
@@ -116,7 +127,7 @@ export default function Clients() {
     const ro = new ResizeObserver(() => {
       const w = setWidth();
       if (!w) return;
-      const n = TESTIMONIALS.length;
+      const n = testimonials.length;
       const index = Math.round(scroller.scrollLeft / stride()) % n;
       wrappingRef.current = true;
       scroller.scrollLeft = w + ((index + n) % n) * stride();
@@ -214,16 +225,16 @@ export default function Clients() {
       scroller.removeEventListener("scrollend", onScrollEnd);
       ro.disconnect();
     };
-  }, [reducedMotion]);
+  }, [reducedMotion, testimonials]);
 
   return (
-    <section id="clients" className="relative px-0 py-16 sm:py-28">
+    <section id={id} className="relative px-0 py-16 sm:py-28">
       <div className="mx-auto max-w-3xl px-6 text-center sm:px-16">
         <p className="font-body text-xs uppercase tracking-[0.18em] text-noah-ink-dim">
-          Clients
+          {eyebrow}
         </p>
         <h2 className="mt-4 font-display text-4xl tracking-tight sm:text-5xl">
-          Teams already changing how they work.
+          {title}
         </h2>
       </div>
 
@@ -231,7 +242,14 @@ export default function Clients() {
         ref={scrollerRef}
         className="quote-carousel mt-8 cursor-grab overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] sm:mt-16 [&::-webkit-scrollbar]:hidden"
       >
-        {LOOP.map((item, index) => (
+        {Array.from({ length: COPIES }, (_, copy) =>
+          testimonials.map((item, index) => ({
+            ...item,
+            key: `${copy}-${index}`,
+          }))
+        )
+          .flat()
+          .map((item, index) => (
           <div
             key={item.key}
             ref={(el) => {

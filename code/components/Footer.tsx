@@ -1,15 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { scrollToHash, scrollToTop } from "@/lib/scrollToHash";
+import { usePathname } from "next/navigation";
+import CompanyLegal from "@/components/CompanyLegal";
+import { homeSectionHref, scrollToHash, scrollToTop } from "@/lib/scrollToHash";
 
 const COLUMNS = [
   {
     title: "Company",
     links: [
+      { label: "About us", href: "/about" },
       { label: "The problem", href: "#problem" },
       { label: "The solution", href: "#solution" },
       { label: "Our way of working", href: "#vision" },
+      { label: "Industries", href: "/industry" },
     ],
   },
   {
@@ -19,11 +23,16 @@ const COLUMNS = [
       { label: "Pricing", href: "#pricing" },
       { label: "FAQ", href: "#faq" },
       { label: "Book a call", href: "/book" },
+      { label: "Contact", href: "/contact" },
+      { label: "Jobs", href: "/jobs" },
     ],
   },
 ];
 
 export default function Footer() {
+  const pathname = usePathname();
+  if (pathname === "/industry" || pathname === "/knowledge") return null;
+
   return (
     <footer className="relative border-t border-noah-ink-hairline bg-noah-ink/5 px-6 pb-8 pt-16 sm:px-10 sm:pt-24">
       <div className="mx-auto flex max-w-6xl flex-col gap-16">
@@ -49,6 +58,7 @@ export default function Footer() {
             <p className="mt-6 font-body text-sm leading-relaxed text-noah-ink-dim">
               We interview, we map, we ship. One department at a time.
             </p>
+            <CompanyLegal />
           </div>
 
           <div className="flex flex-wrap gap-16 sm:gap-24">
@@ -61,9 +71,9 @@ export default function Footer() {
                   {column.links.map((link) => (
                     <li key={link.href}>
                       <Link
-                        href={link.href}
+                        href={homeSectionHref(link.href, pathname)}
                         onClick={
-                          link.href.startsWith("#")
+                          link.href.startsWith("#") && pathname === "/"
                             ? (event) => {
                                 event.preventDefault();
                                 scrollToHash(link.href);
