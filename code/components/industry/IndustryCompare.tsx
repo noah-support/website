@@ -7,30 +7,32 @@ import { useReducedMotion } from "@/lib/useReducedMotion";
 const OPTIONS = [
   {
     id: "diy",
-    title: "DIY",
+    title: "In-house",
     winner: false,
     entails:
-      "Your own people, no outside map, and months of workshops you run yourselves.",
+      "Manual interviews take weeks, leave you without data to prove a problem matters, and offer zero alignment on which department to optimise first.",
     resultLabel: "What you get",
-    result: "A slower, messier version of the process you already have.",
+    result:
+      "Months of internal meetings just to create a slower version of the process you already have.",
   },
   {
     id: "consultants",
     title: "Consultants",
     winner: false,
     entails:
-      "A team on day rates, a long discovery phase, then a slide deck that leaves with them.",
+      "A long discovery phase delivers generic frameworks disguised as custom advice, shaped less around your needs and more around selling you their next project.",
     resultLabel: "What you get",
-    result: "€800.000 for the PDF.",
+    result: "A six-figure PDF with no real insights",
   },
   {
     id: "noah",
-    title: "Noah",
+    title: "Noah.",
     winner: true,
     entails:
-      "Interviews, a process map, and priced cases in 24 hours. Then it keeps watching the work.",
+      "Interviews deliver real insights and ranked business cases so you know what to prioritise first, internal scoping keeps your teams aligned, and a live PoC gets built and scaled upon your approval.",
     resultLabel: "What you get",
-    result: "Dynamic, 24/7 up-to-date business cases.",
+    result:
+      "Total operational clarity and proven solutions built for your exact challenges.",
   },
 ];
 
@@ -47,7 +49,7 @@ export default function IndustryCompare() {
     >
       <div className="mx-auto max-w-3xl text-center">
         <h2 className="industry-in font-display text-4xl tracking-tight sm:text-5xl">
-          Three ways in. One that keeps working.
+          Three options. Only one that keeps working.
         </h2>
         <p className="industry-in mx-auto mt-5 max-w-xl font-body text-noah-ink-dim sm:text-lg">
           Same problem. Three ways to spend the next year. Only one of them
@@ -55,9 +57,7 @@ export default function IndustryCompare() {
         </p>
       </div>
 
-      <div
-        className="mx-auto mt-12 grid max-w-6xl grid-cols-1 items-stretch gap-5 p-3 sm:mt-16 sm:p-5 lg:grid-cols-[0.9fr_0.9fr_1.2fr] lg:gap-6"
-      >
+      <div className="mx-auto mt-12 grid max-w-6xl grid-cols-1 items-stretch gap-5 p-3 sm:mt-16 sm:p-5 lg:grid-cols-[0.9fr_0.9fr_1.2fr] lg:gap-6">
         {OPTIONS.map((option) => (
           <div
             key={option.id}

@@ -1,3 +1,7 @@
+export const SITE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://www.noah.support"
+).replace(/\/+$/, "");
+
 export const COMPANY = {
   address: "Noorderlaan 139, 2030 Antwerpen, Belgium",
   number: "BE1013196672",

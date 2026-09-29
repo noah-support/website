@@ -7,7 +7,7 @@ const AUDIO_SRC = "/noah-opening-message.mp3";
 
 type HeroAuraProps = {
   /** Flips true once the reader has opened the page. */
-  speak: boolean;
+  speak?: boolean;
 };
 
 /**
@@ -16,8 +16,8 @@ type HeroAuraProps = {
  * output waveform, so the shape moves with the voice rather than on a
  * timer.
  */
-export default function HeroAura({ speak }: HeroAuraProps) {
-  const [state, setState] = useState<AgentState>("connecting");
+export default function HeroAura({ speak = false }: HeroAuraProps) {
+  const [state, setState] = useState<AgentState>("listening");
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const ctxRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);

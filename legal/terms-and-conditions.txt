@@ -1,0 +1,137 @@
+GENERAL TERMS AND CONDITIONS noah. (v.4.2026)
+Parties and acceptance
+Noah BV, with registered office at Noorderlaan 139, 2030 Antwerp, Belgium, VAT/company no. BE 1013.196.672 (“Noah“, “we“, “us“, “our“) provides an online software platform and related services (the “Platform” or “Software“).
+
+These general terms and conditions (the “Terms“) govern all access to and use of the Software and all related services provided by Noah (the “Services“). By ordering, accessing or using the Software, the customer (the “Customer“, “you“, “your“) confirms acceptance of these Terms.
+
+The Customer’s general terms and conditions are expressly excluded.
+
+1. Definitions
+Service: a service provided by Noah or an Employee designated by it or a subcontractor designated in consultation with the Customer under this Agreement.
+Intellectual Property Rights: all intellectual, industrial and other property rights (whether registered or unregistered), including but not limited to copyrights, neighbouring rights, trademarks, trade names, logos, drawings, models or applications for registration as a drawing or model, patents, patent applications, domain names, know-how, as well as rights to databases, computer programmes and semiconductors.
+Employee: the employee, agent or subcontractor of Noah whom Noah calls upon to provide the Services.
+Agreement: Noah’s quotation and the Customer’s order, together with these General Terms and Conditions and its appendices.
+Privacy legislation: Regulation (EU) 2016/679 of the European Parliament and of the Council of 27 April 2016 on the protection of natural persons with regard to the processing of personal data and on the free movement of such data, and repealing Directive 95/46/EC (General Data Protection Regulation), as well as all related European and national rules on the protection of personal data.
+Software: the Noah platform developed by Noah, possibly supplemented with additional options.
+Account: the Customer’s administrative account enabling access to the Software.
+Permitted Users / Users: employees/contractors of Customer authorised to access the Software.
+Customer Data: all data, content, files and information uploaded to or processed via the Software by Customer or Users.
+DPA: the data processing agreement governing processing under GDPR.
+2. Scope of the agreement
+The agreement consists of Noah’s quotation/order confirmation, these Terms and any annexes (the “Agreement”).
+
+3. Intellectual Property and Customer Data
+All intellectual property rights in the Software, Services, documentation, updates, upgrades and improvements remain exclusively with Noah and/or its licensors. The Software is licensed, not sold.
+Customer retains ownership of Customer Data. Customer grants Noah a limited, non-exclusive right to host, process and use Customer Data solely to perform the Agreement and for purposes reasonably related thereto (including support and security).
+Analytics (anonymised/aggregated): Noah may generate and use anonymised and/or aggregated usage statistics and technical logs for platform security, quality improvement and product development, provided they do not identify the Customer or any individual.
+Feedback: any suggestions or feedback may be used by Noah without restriction, without obligation to compensate, provided it does not disclose Customer confidential information.
+4. Licence grant
+Subject to payment of all due fees, Noah grants Customer a limited, non-exclusive, non-transferable and non-sublicensable licence to access and use the Software for its internal business purposes during the Term, for the number of Interviews/Projects/Users ordered.
+Customer may not provide the Software to third parties, make it available to third parties, or use it for the benefit of third parties without Noah’s prior written consent.
+5. Accounts, Users, security
+Customer is responsible for all activity under its Account and for compliance by its Users.
+Customer must ensure Users keep credentials confidential and implement reasonable security (strong passwords).
+6. Prohibited use (material breach)
+Except as expressly permitted, Customer and Users may not:
+
+(a) copy, modify, translate, create derivative works, reverse engineer, decompile or attempt to discover source code/algorithms;
+(b) disclose benchmarking or performance results to third parties;
+(c) circumvent access controls, usage limits or security features;
+(d) use bots/scrapers/automated systems without written consent;
+(e) upload malware or unlawful content;
+(f) use the Software unlawfully or in a manner that infringes third-party rights.
+Any breach of this clause constitutes a material breach.
+
+7. Fees and invoicing
+Fees consist of:
+(i) an annual platform fee, and/or
+(ii) credits and/or additional services, as specified in the quotation/price list, or
+(iii) a one-time fee as trial.
+Invoicing: annual fee in advance per contract year; credits, services or one-time trial will receive a dedicated offer in the invoice.
+Prices exclude VAT and taxes unless stated otherwise; Customer bears applicable taxes.
+Payments due within 30 days of invoice date. Late payment interest and fixed compensation as currently stated may remain, subject to mandatory law.
+Suspension for non-payment: Noah may suspend access in case of non-payment of undisputed amounts after notice and a reasonable cure period, without prejudice to other remedies.
+8. Services, support, updates
+Noah may modify, update and improve the Software from time to time. Noah will use reasonable efforts to maintain availability, but does not guarantee uninterrupted or error-free operation.
+The Customer may call on Noah to perform certain Services, including the provision of support services, training, etc. If an ordered service entails an additional fee, the Service will, unless otherwise agreed in writing, be provided on a cost-plus or subscription basis at the rate applicable at that time.
+The Customer may call on Noah’s helpdesk services. The Customer shall provide Noah with all useful and necessary information to resolve the problem. The Customer shall grant Noah access to their computer and/or their company if this is necessary for Noah to analyse or resolve any problems or incidents arising from the Customer’s use of the Software. Noah’s helpdesk is available by telephone every working day between 8.30 a.m. and 5.30 p.m. (except on public holidays) on +32 473 62 43 94. The helpdesk can also be contacted by email: admin@noah.support.
+The Customer shall not enter into any agreements with other ICT suppliers regarding the provision of support services for the Software without Noah’s prior written approval. If, even after Noah’s written consent, the Customer engages another ICT supplier, Noah shall not accept any liability with regard to (i) the work of this supplier, (ii) the integration of its work into the Software, and (iii) the continued proper functioning of the Software.
+At the Customer’s request, Noah may also develop upgrades to the Software. In such a case, Noah will provide the Customer with a price estimate for the implementation of the requested upgrade in advance. Noah is not obliged to comply with this request.
+If the Customer has commissioned Noah to provide other services that require access to the Customer’s Software environment, Noah shall have administrator access to the Customer’s Software environment at all times. No additional costs will be charged for this licence. Noah expressly declares that it will not grant access to this environment to anyone other than its Employees, unless mutually agreed with the Customer. Noah will not abuse the trust placed in it by the Customer. The Customer expressly grants Noah access to the information contained in its Noah environment for the purpose of performing the Services requested by the Customer.
+9. Data protection
+Customer is controller; Noah is processor for personal data processed on Customer’s behalf.
+Processing is governed by the applicable DPA, which forms an integral part of the Agreement.
+Customer warrants it has a lawful basis to provide personal data to Noah and will not provide special categories or children’s data unless expressly agreed in writing and addressed in the DPA.
+Noah implements appropriate technical and organisational measures and ensures authorised personnel are bound by confidentiality.
+AI training / product improvement: Noah may not use Customer Data for product optimisation, including improving algorithms. Customer Data will not be used to train, fine-tune, or otherwise improve any third party AI model or service, nor will such data be made accessible or visible to any other customer or external party. However, Noah may share Customer Data with third-party AI model(s), strictly limited to the extent necessary for processing by such third-party AI model(s) that power the service (e.g., OpenAI, Anthropic), provided that:
+Noah ensures such third parties are contractually bound by equivalent confidentiality and data usage restrictions, including a prohibition on using Customer Data for training, fine-tuning, or otherwise improving their models;
+such third parties are in particular not permitted to make Customer Data accessible or visible to any other external party; and
+Noah ensures that any third party AI model processing Customer Data complies with all applicable data protection laws, including the General Data Protection Regulation (GDPR), through the implementation of appropriate contractual arrangements (such as data processing agreements), technical and organizational measures.
+Noah undertakes to make every reasonable effort to deliver the ordered Software and Services in accordance with best practice, with the care and expertise that the Customer may expect from a professional supplier, and to ensure that the Software is available to the maximum extent possible.
+Noah shall make every reasonable effort to prevent the Software from containing bugs, computer viruses and/or malware that could disrupt its operation. Nevertheless, Noah cannot be held liable for such problems that, despite its efforts, may still be present in the Software delivered.
+Noah shall in no event be liable for any consequential damages such as loss of expected profits, decrease in turnover, increased operating costs, loss of clientele, which the Customer or third parties may suffer as a result of any error or negligence on the part of Noah or an Employee.
+Noah shall not be liable for errors in the performance of the Agreement due to insufficient or incorrect input by the Customer.
+Noah accepts no liability whatsoever for any damage that the Customer may suffer as a result of unauthorised third parties gaining access to the Software due to inadequate security measures taken by the Customer or other errors or negligence on the part of the Customer.
+If Noah is nevertheless liable, Noah’s total liability, however serious the error, whatever the cause, form or subject matter of the claim invoking Noah’s liability, shall never exceed the price paid by the Customer to Noah for the Service that gave rise to the damage during the 12 months preceding the damage, provided that this liability cap shall not fall below EUR 50,000.00 per claim.
+10. Warranties and disclaimers
+Except as expressly stated, the Software and Services are provided “as is” and “as available”, and Noah disclaims all warranties to the maximum extent permitted by law, including merchantability, fitness for purpose and non-infringement.
+Customer remains responsible for decisions made based on outputs produced by the Software (particularly where AI-assisted).
+11. Indemnification (Customer → Noah) (Noah → Customer)
+Customer shall defend, indemnify and hold harmless Noah against third-party claims arising from (i) Customer Data, (ii) unlawful use of the Software, (iii) breach of data protection obligations, or (iv) breach of these Terms.
+Noah shall defend, indemnify and hold harmless Customer against third-party claims arising from (i) breach of data protection obligations, or (ii) breach of these Terms.
+12. Complaints and disputes regarding invoices
+Complaints regarding the Software and/or Services provided must be reported to Noah no later than 30 calendar days after delivery or provision. In the event of a timely protest by the Customer, the Customer is obliged to cooperate fully with Noah’s investigation of the complaint. If the complaint is correct, timely and justified, Noah has the right to remedy this complaint at its own discretion.
+The following shall not be considered errors attributable to Noah:
+errors that occur as a result of changes made by the Customer or by third parties to the Software without Noah’s permission;
+errors caused by incorrect, improper or unauthorised use, as well as any damage caused by hardware or system failure, or by failure of interconnected hardware or other system components, or shortcomings in the Software that do not impede its use;
+errors in third-party software for which Noah or the Customer has a licence, which are the responsibility of the third-party licensor, to the extent (if Noah has the license) Noah has indicated the third-party licensor to the Customer prior to the Agreement entering into force. The third party tools are:
+Northflank
+ElevenLabs
+Anthropic
+OpenAI
+Any objection to invoices must be reported to Noah within 14 days of the invoice date.
+In the absence of a timely protest, the delivery of the Software or Services shall be deemed to have been definitively accepted and the invoices shall be due and payable.
+Any objection must be substantiated, otherwise the right to defer payment of the invoices will lapse.
+13. Payment terms
+The fee payable by the Customer to Noah for the use of the Software and/or the services provided may consist of a fixed annual platform fee and/or a variable fee based on credits purchased, services and actual costs incurred and/or a one-time fee considered as pilot, as specified in the applicable price list or quotation.
+The fixed annual platform fee is invoiced at the start of each contract year. Unless otherwise agreed, the one-time fee for credits, a pilot and other services is invoiced ad-hoc.
+All prices quoted by Noah are in EURO and exclude VAT and costs, unless otherwise stated.
+Invoices must be paid within 30 days of the invoice date by bank transfer to Noah’s account number as indicated on the invoice. Each payment will be applied to the oldest overdue invoice and first to the interest and costs due. Any discounts granted will lapse if the payment terms are not respected.
+In the event of late payment, Noah shall first send the Customer a payment reminder granting the Customer a period of fourteen (14) days to settle the outstanding invoice. If payment is not received within this period, the Customer shall automatically and without further notice be liable for default interest of 6% per annum, with a minimum of EUR 125, without prejudice to Noah’s right to claim higher damages if applicable. The Customer shall also be liable for any reasonable collection, reminder and legal costs incurred by Noah in recovering the outstanding amounts. Any delay in payment by the Customer shall render all outstanding invoices and sums due immediately payable.
+If the Customer wishes to dispute an invoice, such dispute must be notified to Noah by registered letter within fourteen (14) days from the invoice date and must clearly state the reasons for the dispute. In the absence of such notification, the invoice will be deemed to have been accepted.
+In the event of a timely dispute, the payment obligation for the disputed portion of the invoice shall be temporarily suspended, during which both parties shall endeavour in good faith to reach a resolution within a period of thirty (30) days from the date of the dispute notification. Should the parties fail to reach a resolution within this period, Noah may issue a notice of default. In any event, the customer will not withhold payment for any undisputed items included in the invoice.
+14. Duration of the Agreement and termination
+Term is 12 months unless stated otherwise (e.g., in case of pilots, the term is limited to the duration of the pilot); starts on signature or when access is granted, whichever occurs first.
+Renewal: Agreement renews automatically for successive 12-month periods unless either party gives written notice at least 60 days before the end of the then-current term. However, no automatic renewal applies in case of (completion of) pilots.
+Termination for cause: either party may terminate for material breach not cured within a reasonable period after written notice; immediate termination for insolvency/bankruptcy where permitted.
+Effect of termination: licences end; Customer must stop using the Software; confidentiality/IP/liability provisions survive.
+Customer Data on termination: Upon termination or expiry, Noah will, upon Customer’s written request made within 30 days after termination, make Customer Data available for export in a reasonably standard format. After that 30-day period, Noah will delete or irreversibly anonymise Customer Data within a reasonable time, unless retention is required by law or necessary for the establishment, exercise or defence of legal claims. Backups may be retained for a limited period in accordance with Noah’s backup policies and will not be used for any other purpose.
+Suspension right remains available (see clause 7).
+15. Confidentiality
+Each Party undertakes to keep confidential, both during the term of the Agreement and thereafter, any confidential information of a commercial, technical, operational or financial nature relating to the other Party or third parties that it learns during the term of this Agreement.
+Confidential information includes information that has been designated as such by the other Party or which the other Party can reasonably assume to be of a confidential nature. The Parties shall impose the same confidentiality obligation on their employees and staff members and on any third parties (such as suppliers) engaged by them to perform the Agreement and activities reasonably related thereto.
+16. Customer’s property rights
+All documents, data, files and information uploaded by the Customer to our software and services remain the property of the Customer at all times. Noah does not claim any ownership rights to these materials. The Customer retains full ownership and control over the uploaded information.
+
+17. Notices
+All notices under this Agreement (including termination and non-renewal notices) must be in writing and will be deemed validly served if:
+(a) sent by email to the addresses set out below, with a delivery/read receipt (or other evidence of sending), or
+(b) sent by registered mail to the registered office address.
+Notices are deemed received: (i) on the business day of sending if sent by email before 17:00 CET, otherwise the next business day; or (ii) on the first business day following delivery confirmation for registered mail.
+Notices to Noah: admin@noah.support (or such other email as Noah may notify).
+Notices to Customer: the email and address stated in the order/quotation or as updated by Customer by written notice.
+18. Applicable law and disputes
+The validity, interpretation and execution of this Agreement shall be governed by Belgian law. Any dispute relating to the conclusion, validity, execution and/or termination of this Agreement shall be settled by the competent court in Antwerp.
+However, before resorting to the courts, the Parties shall negotiate in good faith to settle their dispute amicably.
+19. Miscellaneous
+For the term and 12 months thereafter, Customer shall not (i) solicit to hire Noah employees involved in the Services, and (ii) use Noah confidential information to build a substantially similar competing product.
+Noah may assign in a reorganisation/merger/acquisition with notice to Customer. Customer may assign in a reorganisation/merger/acquisition with notice to Noah.
+Following the successful completion of the pilot phase, Noah may use Customer’s name and logo as a reference in its commercial and marketing materials, including but not limited to presentations and website. Such use will be limited to factual representation of the collaboration and will not disclose any confidential information.
+This Agreement (including its annexes) constitutes the entire agreement between the Parties concerning the subject matter referred to above. This Agreement supersedes and cancels any prior written or oral agreement, offer, correspondence or proposal concerning the use of the Software and/or the Services. Any amendment or modification to this Agreement shall only be binding if made in writing and duly signed by both Parties.
+If any provision of this Agreement, or the performance thereof, proves to be invalid or unenforceable, the remaining provisions shall not be affected and shall remain in full force and effect. In such a case, the Parties shall draw up a new provision that achieves the objectives intended by the invalid or unenforceable provision, within the limits of applicable law, and include it in an appendix to this Agreement.
+The Customer may only transfer its rights or obligations under this Agreement to a third party with the prior written consent of Noah.
+Each Party shall bear its own costs in connection with the conclusion and performance of this Agreement.
+A Party shall not be held liable for any failure to fulfil its obligations under this Agreement if the failure is caused by circumstances beyond the reasonable control of that Party, such as fire, flood, strikes, labour unrest or other disruptions in economic life, accidents, embargoes, cyber incidents / major cloud outages, blockades, legal restrictions, riots, government measures, unavailability of means of communication, terrorist attacks, war, etc. In that case, the performance of the Agreement shall be suspended until the reason for force majeure ceases to exist. However, if the force majeure lasts for more than 3 months, both Parties shall be entitled to terminate the Agreement immediately without the other Party being entitled to compensation.
+Noah may amend these Terms from time to time. Any changes shall be notified to the Customer at least thirty (30) days prior to their entry into force. Continued use of the Software after the effective date of the changes shall constitute acceptance of the updated Terms.
+Noah will use reasonable efforts to ensure that the Software is available with a minimum uptime of 95%, measured on a monthly basis, excluding scheduled maintenance and circumstances beyond Noah’s reasonable control. If the Software is unavailable beyond this uptime commitment, the duration of the Agreement shall be extended by one (1) day for each full day of unavailability.
+noah. BV – http://www.noah.support – VAT: BE1013.196.672 – Account no.: BE88 7380 4410 7841

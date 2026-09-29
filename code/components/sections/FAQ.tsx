@@ -39,7 +39,10 @@ function FaqItem({ q, a }: { q: string; a: string }) {
         className="flex w-full cursor-pointer items-center justify-between gap-6 text-left font-display text-xl tracking-tight sm:text-2xl"
       >
         {q}
-        <span className="relative h-4 w-4 shrink-0 text-noah-orange" aria-hidden>
+        <span
+          className="relative h-4 w-4 shrink-0 text-noah-orange"
+          aria-hidden
+        >
           <span className="absolute inset-0 flex items-center justify-center">
             <span className="h-[1.5px] w-4 bg-current" />
           </span>

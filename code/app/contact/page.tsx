@@ -1,5 +1,6 @@
 import CompanyLegal from "@/components/CompanyLegal";
 import ContactForm from "@/components/contact/ContactForm";
+import FAQ from "@/components/sections/FAQ";
 
 export const metadata = {
   title: "Contact — Noah",
@@ -27,6 +28,7 @@ export default function ContactPage() {
 
         <ContactForm recaptchaSiteKey={recaptchaSiteKey} />
       </section>
+      <FAQ />
     </main>
   );
 }

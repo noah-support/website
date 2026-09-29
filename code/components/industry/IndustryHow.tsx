@@ -81,30 +81,57 @@ function InterviewPhone() {
 }
 
 function StepArrow({ index }: { index: number }) {
+  const marked = index === 1;
   return (
-    <svg
-      data-arrow
-      viewBox="0 0 24 40"
-      className="my-3 h-8 w-6 text-noah-ink-faint"
+    <div
+      className="relative flex w-full flex-col items-center py-2 sm:py-3"
       style={{ "--i": index } as CSSProperties}
-      fill="none"
-      aria-hidden
     >
-      <path
-        d="M12 2v30m0 0-6-7m6 7 6-7"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+      <svg
+        data-arrow
+        viewBox="0 0 24 128"
+        className="h-16 w-6 text-noah-ink-faint sm:h-20"
+        fill="none"
+        aria-hidden
+      >
+        <path
+          d="M12 2v112m0 0-7-8m7 8 7-8"
+          stroke="currentColor"
+          strokeWidth="1.75"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+      {marked ? (
+        <div className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
+          <div
+            data-pain
+            className="flex items-center gap-2.5 rounded-full border border-noah-orange/20 bg-noah-cream py-1.5 pl-1.5 pr-4 shadow-[0_10px_28px_-14px_rgba(20,23,42,0.45)]"
+          >
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-noah-orange/10 text-noah-orange">
+              <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>
+                <path
+                  d="M6 6l12 12M18 6 6 18"
+                  stroke="currentColor"
+                  strokeWidth="2.4"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </span>
+            <span className="whitespace-nowrap font-body text-xs font-semibold uppercase tracking-[0.16em] text-noah-orange">
+              Painpoint found
+            </span>
+          </div>
+        </div>
+      ) : null}
+    </div>
   );
 }
 
 function ProcessDiagram({ steps }: { steps: { label: string }[] }) {
   return (
     <div className="flex h-full items-center justify-center px-6 py-16">
-      <div className="flex w-full max-w-xs flex-col items-center">
+      <div className="flex w-full max-w-md flex-col items-center">
         {steps.map((step, index) => (
           <Fragment key={step.label}>
             <div
@@ -112,13 +139,13 @@ function ProcessDiagram({ steps }: { steps: { label: string }[] }) {
               className="w-full"
               style={{ "--i": index } as CSSProperties}
             >
-              <GlassPane className="flex w-full items-center justify-center gap-3 px-6 py-5">
+              <GlassPane className="flex w-full items-center justify-center gap-3.5 px-10 py-7 sm:py-8">
                 <span
                   data-dot
-                  className="h-2 w-2 shrink-0 rounded-full bg-noah-orange"
+                  className="h-3 w-3 shrink-0 rounded-full bg-noah-orange"
                   aria-hidden
                 />
-                <span className="font-body text-sm font-medium tracking-[0.01em] text-noah-ink sm:text-base">
+                <span className="font-body text-lg font-medium tracking-[0.01em] text-noah-ink sm:text-xl">
                   {step.label}
                 </span>
               </GlassPane>

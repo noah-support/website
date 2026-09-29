@@ -47,7 +47,7 @@ export default async function BlogPostPage({
         <div className="mx-auto max-w-3xl">
           <Link
             href="/knowledge/blog"
-            className="glass glass-pill mb-8 inline-flex h-12 items-center px-6 text-sm font-medium text-noah-ink transition-colors hover:text-noah-orange"
+            className="glass glass-pill glass-orange mb-8 inline-flex h-12 items-center px-6 text-sm font-medium text-noah-cream"
           >
             Back
           </Link>

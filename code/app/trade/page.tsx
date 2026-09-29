@@ -15,12 +15,13 @@ export default function TradePage() {
   const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? "";
 
   return (
-    <main>
-      <TradeHero recaptchaSiteKey={recaptchaSiteKey} />
+    <main className="h-lvh flex justify-center items-center">
+      <p>this page is currently not available!</p>
+      {/* <TradeHero recaptchaSiteKey={recaptchaSiteKey} />
       <Featured eyebrow={TRADE_PROOF_EYEBROW} outlets={TRADE_PROOF} />
       <TradeDemo />
       <TradeHow />
-      <TradeCompare />
+      <TradeCompare /> */}
     </main>
   );
 }

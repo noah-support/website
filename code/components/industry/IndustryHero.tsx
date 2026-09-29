@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "@/lib/gsap";
 import AnimatedBackdrop from "@/components/AnimatedBackdrop";
 import HeroKpi from "@/components/HeroKpi";
@@ -44,7 +39,7 @@ export default function IndustryHero({ industry }: { industry: Industry }) {
     }).to(
       rest,
       { opacity: 1, y: 0, duration: 0.5, stagger: 0.08, ease: "power2.out" },
-      "-=0.1"
+      "-=0.1",
     );
     return () => {
       tl.kill();
@@ -56,6 +51,7 @@ export default function IndustryHero({ industry }: { industry: Industry }) {
       <AnimatedBackdrop
         poster={industry.poster}
         motion={industry.video}
+        alt={industry.name}
         animate={!reducedMotion}
         onReady={() => setReady(true)}
       />
@@ -83,14 +79,10 @@ export default function IndustryHero({ industry }: { industry: Industry }) {
             </p>
             <a
               data-roll
-              href="#comparison"
-              onClick={(event) => {
-                event.preventDefault();
-                scrollToHash("#comparison");
-              }}
-              className="glass glass-pill mt-10 flex h-12 w-fit items-center px-7 text-sm font-medium text-noah-ink transition-colors hover:text-noah-orange"
+              href="/book"
+              className="glass glass-orange glass-pill mt-10 flex h-12 w-fit items-center px-7 text-sm font-medium text-white"
             >
-              See how it works
+              Book a demo
             </a>
           </div>
 

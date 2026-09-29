@@ -44,84 +44,6 @@ export type Industry = {
 
 export const INDUSTRIES: Industry[] = [
   {
-    slug: "hospitality",
-    name: "Hospitality",
-    kind: "template",
-    poster: "/industries/hospitality.jpg",
-    video: "/industries/hospitality.avif",
-    eyebrow: "Hospitality",
-    title: "See how a stay actually moves through the house.",
-    body: "Noah interviews the floor, maps the handoffs, and prices what to fix first.",
-    moneyStart: 420000,
-    hoursStart: 1380,
-    alerts: [
-      "Check-in delay flagged at front desk, evening peak",
-      "Kitchen hold detected between pass and floor",
-      "Duplicate intake found in reservations and arrivals",
-    ],
-    interviews: {
-      title: "Interviews",
-      subtitle:
-        "First, it interviews the floor bottom-up in 24 hours, from front desk to kitchen, and surfaces what only the people doing the work actually know.",
-    },
-    mapping: {
-      title: "Mapping",
-      subtitle:
-        "Then it maps those conversations onto the guest path end to end, and marks exactly where the stay breaks down.",
-      steps: [
-        { label: "Reservation taken" },
-        { label: "Kitchen handoff" },
-        { label: "Guest checkout" },
-      ],
-    },
-    casesTitle: "Business cases, ready to implement.",
-    casesBody:
-      "Each one ranked, priced, and traced straight back to what the floor told us.",
-    cases: [
-      {
-        rank: "01",
-        title: "Arrivals check-in",
-        time: "-40%",
-        timeLabel: "time at desk",
-        money: "€72k",
-        moneyLabel: "saved per year",
-        explanation:
-          "Six systems become one intake so the guest is in the room instead of at the counter.",
-      },
-      {
-        rank: "02",
-        title: "Kitchen to floor",
-        time: "-35%",
-        timeLabel: "ticket time",
-        money: "€58k",
-        moneyLabel: "saved per year",
-        explanation:
-          "Tickets route themselves by station instead of waiting on a shouted pass.",
-      },
-      {
-        rank: "03",
-        title: "Housekeeping turns",
-        time: "-30%",
-        timeLabel: "room turn time",
-        money: "€44k",
-        moneyLabel: "saved per year",
-        explanation:
-          "Checkout, clean, and inspect sit on one list instead of three radios.",
-      },
-    ],
-    featuredEyebrow: "In this space",
-    featured: [
-      { name: "Hotel group" },
-      { name: "Restaurant chain" },
-      { name: "Catering" },
-      { name: "Venue" },
-    ],
-    cta: {
-      eyebrow: "Ready when you are",
-      title: "One floor. Twenty-four hours. A ranked list.",
-    },
-  },
-  {
     slug: "pharmaceutical",
     name: "Pharmaceutical",
     kind: "template",
@@ -129,7 +51,7 @@ export const INDUSTRIES: Industry[] = [
     video: "/industries/pharmaceutical.avif",
     eyebrow: "Pharmaceutical",
     title: "See how a batch actually moves through the site.",
-    body: "Noah interviews QA, ops, and the line, maps the holds, and prices the next fix.",
+    body: "Noah interviews your departments, from quality assurance to the line operators.",
     moneyStart: 890000,
     hoursStart: 1960,
     alerts: [
@@ -189,10 +111,8 @@ export const INDUSTRIES: Industry[] = [
     ],
     featuredEyebrow: "In this space",
     featured: [
-      { name: "Manufacturing site" },
-      { name: "QC lab" },
-      { name: "Distributor" },
-      { name: "Research campus" },
+      { name: "P95", href: "https://p-95.com/" },
+      { name: "UCB", href: "https://www.ucb.com/" },
     ],
     cta: {
       eyebrow: "Ready when you are",
@@ -200,12 +120,12 @@ export const INDUSTRIES: Industry[] = [
     },
   },
   {
-    slug: "manufacturing",
-    name: "Manufacturing",
+    slug: "industrials",
+    name: "Industrials",
     kind: "template",
     poster: "/industries/manufacturing.jpg",
     video: "/industries/manufacturing.avif",
-    eyebrow: "Manufacturing",
+    eyebrow: "Industrials",
     title: "See the shop floor as it actually runs.",
     body: "Noah interviews the people on the line, maps where work stalls, and prices the fix first.",
     moneyStart: 610000,
@@ -267,10 +187,11 @@ export const INDUSTRIES: Industry[] = [
     ],
     featuredEyebrow: "In this space",
     featured: [
-      { name: "Automotive supplier" },
-      { name: "Food processing" },
-      { name: "Chemicals" },
-      { name: "Equipment maker" },
+      { name: "Vekoma", href: "https://www.vekoma.com/" },
+      { name: "Sweco", href: "https://www.swecobelgium.be/en/" },
+      { name: "ADB Safegate", href: "https://adbsafegate.com/" },
+      { name: "Corialis", href: "https://www.corialis-group.com/home/" },
+      { name: "DEME", href: "https://www.deme-group.com/" },
     ],
     cta: {
       eyebrow: "Ready when you are",
@@ -345,10 +266,8 @@ export const INDUSTRIES: Industry[] = [
     ],
     featuredEyebrow: "In this space",
     featured: [
-      { name: "Motor insurer" },
-      { name: "Life insurer" },
-      { name: "Mutual" },
-      { name: "Broker network" },
+      { name: "Credendo", href: "https://credendo.com/en" },
+      { name: "Concordia", href: "https://concordia.be/en/" },
     ],
     cta: {
       eyebrow: "Ready when you are",
@@ -356,25 +275,83 @@ export const INDUSTRIES: Industry[] = [
     },
   },
   {
-    slug: "agencies",
-    name: "Agencies",
-    kind: "partner",
-    poster: "/industries/agencies.jpg",
-    video: "/industries/agencies.avif",
-    eyebrow: "Partner programme",
-    title: "Deliver AI impact faster. For every client you have.",
-    body: "",
-    moneyStart: 0,
-    hoursStart: 0,
-    alerts: [],
-    interviews: { title: "", subtitle: "" },
-    mapping: { title: "", subtitle: "", steps: [] },
-    casesTitle: "",
-    casesBody: "",
-    cases: [],
-    featuredEyebrow: "",
-    featured: [],
-    cta: { eyebrow: "", title: "" },
+    slug: "financial-services",
+    name: "Financial Services",
+    kind: "template",
+    poster: "/industries/finance.jpg",
+    video: "/industries/finance.avif",
+    eyebrow: "Financial Services",
+    title: "See how a file actually moves through the firm.",
+    body: "Noah interviews the people on the work, maps where a decision stalls, and prices what to fix first.",
+    moneyStart: 540000,
+    hoursStart: 1620,
+    alerts: [
+      "Approval hold flagged in credit, mid-office queue",
+      "Handoff delay detected between onboarding and KYC",
+      "Duplicate check found in compliance and operations",
+    ],
+    interviews: {
+      title: "Interviews",
+      subtitle:
+        "First, it interviews a whole department bottom-up in 24 hours, from onboarding to credit, and surfaces what only the people on the file actually know.",
+    },
+    mapping: {
+      title: "Mapping",
+      subtitle:
+        "Then it maps those conversations onto the file path end to end, and marks exactly where the decision stalls.",
+      steps: [
+        { label: "File opened" },
+        { label: "KYC check" },
+        { label: "Decision issued" },
+      ],
+    },
+    casesTitle: "Business cases, ready to implement.",
+    casesBody:
+      "Each one ranked, priced, and traced straight back to what the team told us.",
+    cases: [
+      {
+        rank: "01",
+        title: "Credit intake",
+        time: "-40%",
+        timeLabel: "time to first owner",
+        money: "€130k",
+        moneyLabel: "saved per year",
+        explanation:
+          "A file is typed once and routed by intent, instead of copied into three queues.",
+      },
+      {
+        rank: "02",
+        title: "KYC reuse",
+        time: "-35%",
+        timeLabel: "time to decision",
+        money: "€88k",
+        moneyLabel: "saved per year",
+        explanation:
+          "The same check is asked once and carried forward, instead of redone in the next team.",
+      },
+      {
+        rank: "03",
+        title: "Payment ops",
+        time: "-30%",
+        timeLabel: "reconciliation time",
+        money: "€64k",
+        moneyLabel: "saved per year",
+        explanation:
+          "Breaks route to the owner already named on the file, instead of sitting on a shared list.",
+      },
+    ],
+    featuredEyebrow: "In this space",
+    featured: [
+      {
+        name: "Finance & invest.brussels",
+        href: "https://finance.brussels/en/",
+      },
+      { name: "Noshaq", href: "https://noshaq.be/en/" },
+    ],
+    cta: {
+      eyebrow: "Ready when you are",
+      title: "One department. Twenty-four hours. A cleaner file.",
+    },
   },
   {
     slug: "other",
@@ -444,15 +421,43 @@ export const INDUSTRIES: Industry[] = [
     ],
     featuredEyebrow: "In this space",
     featured: [
-      { name: "Public sector" },
-      { name: "Professional services" },
-      { name: "Energy" },
-      { name: "Retail" },
+      { name: "Easyfairs", href: "https://www.easyfairs.com/" },
+      { name: "Dakgroep Naessens", href: "https://www.dakwerken.com/" },
+      { name: "Waterlink", href: "https://water-link.be/" },
+      {
+        name: "Corsendonk Hotels & Clubs",
+        href: "https://corsendonkhotels.com/",
+      },
+      {
+        name: "Delhaize",
+        href: "https://www.delhaize.be/about-delhaize/company",
+      },
     ],
     cta: {
       eyebrow: "Ready when you are",
       title: "One department. Twenty-four hours. No guesswork.",
     },
+  },
+  {
+    slug: "agencies",
+    name: "Agencies",
+    kind: "partner",
+    poster: "/industries/agencies.jpg",
+    video: "/industries/agencies.avif",
+    eyebrow: "Partner programme",
+    title: "Deliver AI impact faster. For every client.",
+    body: "",
+    moneyStart: 0,
+    hoursStart: 0,
+    alerts: [],
+    interviews: { title: "", subtitle: "" },
+    mapping: { title: "", subtitle: "", steps: [] },
+    casesTitle: "",
+    casesBody: "",
+    cases: [],
+    featuredEyebrow: "",
+    featured: [],
+    cta: { eyebrow: "", title: "" },
   },
 ];
 

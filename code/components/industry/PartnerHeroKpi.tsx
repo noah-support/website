@@ -13,13 +13,13 @@ function formatCount(value: number) {
 function KpiCard({ label, value }: { label: string; value: string }) {
   return (
     <GlassPane as="div" className="flex flex-col gap-2 p-4 sm:p-5">
-      <p className="font-body text-[11px] leading-snug text-noah-ink-dim">
+      <p className="font-body text-[10px] leading-snug text-noah-ink-dim sm:text-[11px]">
         {label}
       </p>
-      <p className="font-body text-2xl font-semibold tabular-nums whitespace-nowrap text-noah-ink sm:text-3xl">
+      <p className="font-body text-xl font-semibold tabular-nums whitespace-nowrap text-noah-ink sm:text-3xl">
         {value}
       </p>
-      <p className="font-body text-[11px] text-noah-orange">▲ live, updating</p>
+      <p className="font-body text-[10px] text-noah-orange sm:text-[11px]">▲ live, updating</p>
     </GlassPane>
   );
 }
@@ -59,7 +59,7 @@ export default function PartnerHeroKpi() {
         </span>
         <p
           key={alertIndex}
-          className={`${live && alertIndex > 0 ? "alert-fade-in " : ""}font-body text-[13px] leading-snug text-noah-ink`}
+          className={`${live && alertIndex > 0 ? "alert-fade-in " : ""}font-body text-xs leading-snug text-noah-ink sm:text-[13px]`}
         >
           {alerts[alertIndex]}
         </p>

@@ -11,6 +11,7 @@ import { gsap } from "@/lib/gsap";
 import AnimatedBackdrop from "@/components/AnimatedBackdrop";
 import SplitWords from "@/components/SplitWords";
 import BookshelfScrollHint from "@/components/BookshelfScrollHint";
+import { ShelfBackButton } from "@/components/Header";
 import { KNOWLEDGE_ITEMS } from "@/lib/knowledge";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
@@ -27,7 +28,8 @@ function preloadImage(src: string) {
 
 export default function KnowledgeBookshelf() {
   const [ready, setReady] = useState(false);
-  const [active, setActive] = useState(KNOWLEDGE_ITEMS[0]?.slug ?? "");
+  const [hovered, setHovered] = useState<string | null>(null);
+  const active = hovered ?? KNOWLEDGE_ITEMS[0]?.slug ?? "";
   const titleRef = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
 
@@ -38,10 +40,7 @@ export default function KnowledgeBookshelf() {
     }, 8000);
 
     void Promise.all(
-      KNOWLEDGE_ITEMS.flatMap((item) => [
-        preloadImage(item.poster),
-        preloadImage(item.video),
-      ])
+      KNOWLEDGE_ITEMS.map((item) => preloadImage(item.poster))
     ).then(() => {
       if (!cancelled) setReady(true);
     });
@@ -77,6 +76,7 @@ export default function KnowledgeBookshelf() {
 
   return (
     <main className="relative flex min-h-[100dvh] flex-col bg-noah-cream max-xl:h-[100dvh] max-xl:overflow-hidden xl:h-[100dvh] xl:overflow-hidden xl:bg-noah-navy-deep">
+      <ShelfBackButton />
       <div
         aria-hidden={!ready}
         className={`industry-loader ${ready ? "industry-loader--done" : ""}`}
@@ -106,18 +106,27 @@ export default function KnowledgeBookshelf() {
         </p>
       </div>
 
-      <div className="knowledge-shelf industry-shelf xl:absolute xl:inset-0">
+      <div
+        className="knowledge-shelf industry-shelf xl:absolute xl:inset-0"
+        onPointerLeave={() => setHovered(null)}
+        onBlur={(event) => {
+          const next = event.relatedTarget;
+          if (next instanceof Node && event.currentTarget.contains(next)) return;
+          setHovered(null);
+        }}
+      >
         {KNOWLEDGE_ITEMS.map((item) => {
           const isActive = item.slug === active;
           const inner = (
             <>
               <AnimatedBackdrop
                 poster={item.poster}
-                motion={item.video}
-                animate={ready && isActive && !reducedMotion}
+                motion={item.video.replace(/\.avif$/i, ".mp4")}
+                alt={item.name}
+                animate={ready && hovered === item.slug && !reducedMotion}
               />
               <span className="industry-shelf-scrim" aria-hidden />
-              <span className="relative z-10 mt-auto flex flex-col items-start gap-3 px-5 py-6 sm:px-7 sm:py-8">
+              <span className="industry-shelf-copy relative z-10 mt-auto flex flex-col items-start gap-3 px-5 py-6 sm:px-7 sm:py-8">
                 {item.comingSoon ? (
                   <span className="glass glass-pill glass-on-dark px-3 py-1.5 font-body text-[11px] uppercase tracking-[0.16em] text-noah-fog">
                     Coming soon
@@ -130,9 +139,8 @@ export default function KnowledgeBookshelf() {
             </>
           );
           const shellProps = {
-            onPointerEnter: () => setActive(item.slug),
-            onMouseEnter: () => setActive(item.slug),
-            onFocus: () => setActive(item.slug),
+            onPointerEnter: () => setHovered(item.slug),
+            onFocus: () => setHovered(item.slug),
             "data-active": isActive ? "" : undefined,
             "data-soon": item.comingSoon ? "" : undefined,
             className: "industry-shelf-item",

@@ -5,35 +5,47 @@ import GlassPane from "@/components/GlassPane";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
 export type Testimonial = {
+  company: string;
+  figure: string;
+  label: string;
   quote: string;
-  role: string;
-  org: string;
 };
 
 const TESTIMONIALS: Testimonial[] = [
   {
+    company: "ADB Safegate",
+    figure: "1 week",
+    label: "to executive buy-in",
     quote:
-      "We had a mapped, priced business case for our finance department before our usual vendor had finished the discovery call.",
-    role: "Head of Operations",
-    org: "logistics group",
+      "Production teams used noah's insights to convince management and kick off high-ROI AI builds within 2 weeks.",
   },
   {
+    company: "UCB",
+    figure: "€250k+",
+    label: "consulting saved",
     quote:
-      "No slide decks. Just a clear map of where our process actually breaks, and three ways to fix it.",
-    role: "COO",
-    org: "mid-market insurer",
+      "QA team identified top AI opportunities in 1 week, replacing months of external consulting. Moving forward with other teams.",
   },
   {
+    company: "Vekoma",
+    figure: "€350k+",
+    label: "consulting saved",
     quote:
-      "The interviews alone surfaced problems our own process owners hadn't named out loud yet.",
-    role: "VP Transformation",
-    org: "manufacturing",
+      "20 interviews in 1 day. Clear AI roadmap delivered the next day. Now company wide roll-out.",
   },
   {
+    company: "Sweco",
+    figure: "2,500",
+    label: "employees interviewed",
     quote:
-      "Cheaper than the consultancy we almost hired, and we kept the knowledge in-house.",
-    role: "Director of Operations",
-    org: "healthcare network",
+      "Company-wide AI insights on a continuous basis. Already €500k+ saved on consultants.",
+  },
+  {
+    company: "Credendo",
+    figure: "€100k+",
+    label: "consulting saved",
+    quote:
+      "AI opportunities mapped across teams in under a week. Straight into execution. Now in T&C stage.",
   },
 ];
 
@@ -63,9 +75,8 @@ export default function Clients({
     function stride() {
       const first = cardRefs.current[0];
       if (!first) return 0;
-      const gap =
-        parseFloat(getComputedStyle(scroller).columnGap || "0") || 20;
-      return first.offsetWidth + gap;
+      const gap = parseFloat(getComputedStyle(scroller).columnGap);
+      return first.offsetWidth + (Number.isFinite(gap) ? gap : 0);
     }
 
     function setWidth() {
@@ -90,13 +101,15 @@ export default function Clients({
     function paint() {
       const track = scrollerRef.current;
       if (!track) return;
-      const mid = track.scrollLeft + track.clientWidth / 2;
+      const trackRect = track.getBoundingClientRect();
+      const mid = trackRect.left + trackRect.width / 2;
       for (const card of cardRefs.current) {
         if (!card) continue;
-        const cardMid = card.offsetLeft + card.offsetWidth / 2;
+        const rect = card.getBoundingClientRect();
+        const cardMid = rect.left + rect.width / 2;
         const t = Math.max(
           -1.15,
-          Math.min(1.15, (cardMid - mid) / Math.max(card.offsetWidth, 1))
+          Math.min(1.15, (cardMid - mid) / Math.max(rect.width, 1))
         );
         const abs = Math.abs(t);
         if (reducedMotion) {
@@ -138,10 +151,8 @@ export default function Clients({
 
     let drag: { id: number; x: number; left: number; moved: boolean } | null =
       null;
-    let settleTimer = 0;
 
     function settle() {
-      window.clearTimeout(settleTimer);
       const step = stride();
       if (!step) return;
       const index = Math.round(scroller.scrollLeft / step);
@@ -151,14 +162,8 @@ export default function Clients({
       });
     }
 
-    function settleSoon() {
-      window.clearTimeout(settleTimer);
-      settleTimer = window.setTimeout(settle, 90);
-    }
-
     function onPointerDown(event: PointerEvent) {
       if (event.button !== 0) return;
-      window.clearTimeout(settleTimer);
       drag = {
         id: event.pointerId,
         x: event.clientX,
@@ -182,6 +187,7 @@ export default function Clients({
       drag.moved = true;
       scroller.scrollLeft = drag.left - dx;
       wrap();
+      paint();
     }
 
     function onPointerUp(event: PointerEvent) {
@@ -193,15 +199,6 @@ export default function Clients({
       if (moved) settle();
     }
 
-    function onWheel(event: WheelEvent) {
-      const dx = event.deltaX !== 0 ? event.deltaX : event.deltaY;
-      if (dx === 0) return;
-      if (event.cancelable) event.preventDefault();
-      scroller.scrollLeft += dx;
-      wrap();
-      settleSoon();
-    }
-
     function onScrollEnd() {
       if (wrappingRef.current) return;
       wrap();
@@ -211,17 +208,14 @@ export default function Clients({
     window.addEventListener("pointermove", onPointerMove, { passive: false });
     window.addEventListener("pointerup", onPointerUp);
     window.addEventListener("pointercancel", onPointerUp);
-    scroller.addEventListener("wheel", onWheel, { passive: false });
     scroller.addEventListener("scrollend", onScrollEnd);
 
     return () => {
-      window.clearTimeout(settleTimer);
       scroller.removeEventListener("scroll", onScroll);
       scroller.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerup", onPointerUp);
       window.removeEventListener("pointercancel", onPointerUp);
-      scroller.removeEventListener("wheel", onWheel);
       scroller.removeEventListener("scrollend", onScrollEnd);
       ro.disconnect();
     };
@@ -240,7 +234,7 @@ export default function Clients({
 
       <div
         ref={scrollerRef}
-        className="quote-carousel mt-8 cursor-grab overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] sm:mt-16 [&::-webkit-scrollbar]:hidden"
+        className="quote-carousel mt-8 [-ms-overflow-style:none] [scrollbar-width:none] sm:mt-16 [&::-webkit-scrollbar]:hidden"
       >
         {Array.from({ length: COPIES }, (_, copy) =>
           testimonials.map((item, index) => ({
@@ -257,13 +251,20 @@ export default function Clients({
             }}
             className="quote-carousel-card"
           >
-            <GlassPane className="flex h-full min-h-[9rem] flex-col justify-between gap-5 px-6 py-5 sm:min-h-[11.5rem] sm:gap-6 sm:px-8 sm:py-6">
-              <p className="font-display text-lg leading-snug tracking-tight sm:text-xl">
-                &ldquo;{item.quote}&rdquo;
-              </p>
-              <p className="font-body text-sm text-noah-ink-dim">
-                <span className="block text-noah-ink">{item.role}</span>
-                <span>{item.org}</span>
+            <GlassPane className="flex h-full min-h-[16rem] flex-col justify-between gap-6 px-6 py-6 sm:min-h-[18rem] sm:px-8 sm:py-7">
+              <div>
+                <p className="font-display text-4xl tracking-tight sm:text-5xl">
+                  {item.figure}
+                </p>
+                <p className="mt-2 font-body text-xs uppercase tracking-[0.18em] text-noah-ink-dim">
+                  {item.label}
+                </p>
+                <p className="mt-5 font-body text-base leading-snug sm:text-lg">
+                  {item.quote}
+                </p>
+              </div>
+              <p className="font-display text-lg tracking-tight sm:text-xl">
+                {item.company}
               </p>
             </GlassPane>
           </div>

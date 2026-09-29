@@ -13,6 +13,7 @@ import IndustryPlaceholder from "@/components/industry/IndustryPlaceholder";
 import { getIndustry, INDUSTRIES } from "@/lib/industries";
 import { PARTNER_PROOF } from "@/lib/partner";
 import { notFound } from "next/navigation";
+import InnovationMap from "@/components/sections/InnovationMap";
 
 export function generateStaticParams() {
   return INDUSTRIES.map((industry) => ({ name: industry.slug }));
@@ -50,7 +51,9 @@ export default async function IndustryNamePage({
         <IndustryPartnerReasons />
         <IndustryPartnerFit />
         <IndustryPartnerHow />
-        <IndustryPartnerForm recaptchaSiteKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? ""} />
+        <IndustryPartnerForm
+          recaptchaSiteKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? ""}
+        />
       </main>
     );
   }
@@ -64,6 +67,7 @@ export default async function IndustryNamePage({
       />
       <IndustryCompare />
       <IndustryHow industry={industry} />
+      <InnovationMap />
       <Pricing />
       <FinalCTA eyebrow={industry.cta.eyebrow} title={industry.cta.title} />
     </main>

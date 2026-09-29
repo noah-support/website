@@ -112,17 +112,41 @@ function mapTags(post: WpPost): BlogTag[] {
     }));
 }
 
+function escapeAttr(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function ensureImageAlt(html: string, fallback: string) {
+  const alt = escapeAttr(fallback.trim() || "Noah");
+  return html.replace(/<img\b([^>]*)>/gi, (tag, attrs: string) => {
+    const match = attrs.match(
+      /\balt\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/i
+    );
+    const current = match
+      ? (match[1] ?? match[2] ?? match[3] ?? "").trim()
+      : null;
+    if (current) return tag;
+    if (match) return `<img${attrs.replace(match[0], `alt="${alt}"`)}>`;
+    return `<img alt="${alt}"${attrs}>`;
+  });
+}
+
 function mapPost(post: WpPost): BlogPost {
   const { image, imageAlt } = featuredImage(post);
+  const title = stripHtml(post.title?.rendered ?? "");
   return {
     id: post.id,
     slug: post.slug,
-    title: stripHtml(post.title?.rendered ?? ""),
+    title,
     excerpt: stripHtml(post.excerpt?.rendered ?? ""),
-    content: post.content?.rendered ?? "",
+    content: ensureImageAlt(post.content?.rendered ?? "", title),
     date: post.date,
     image,
-    imageAlt,
+    imageAlt: imageAlt.trim() || title,
     tags: mapTags(post),
   };
 }

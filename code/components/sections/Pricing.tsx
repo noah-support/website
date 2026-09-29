@@ -72,9 +72,8 @@ export default function Pricing() {
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: card,
-            start: "top 88%",
-            end: "top 58%",
-            scrub: 0.6,
+            start: "top 86%",
+            toggleActions: "play none none none",
           },
         });
         tl.to(card, {

@@ -35,8 +35,29 @@ function wordpressImagePatterns(): ImagePattern[] {
 }
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ["192.168.20.80"],
   images: {
+    formats: ["image/avif", "image/webp"],
     remotePatterns: wordpressImagePatterns(),
+  },
+  async redirects() {
+    return [
+      {
+        source: "/industry/manufacturing",
+        destination: "/industry/industrials",
+        permanent: true,
+      },
+      {
+        source: "/industry/hospitality",
+        destination: "/industry",
+        permanent: true,
+      },
+      {
+        source: "/industry/retail",
+        destination: "/industry",
+        permanent: true,
+      },
+    ];
   },
 };
 

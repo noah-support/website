@@ -71,7 +71,7 @@ function TeamCard({
       >
         <Image
           src={member.image}
-          alt={front ? member.alt : ""}
+          alt={member.alt}
           fill
           sizes="(min-width: 1024px) 40vw, 72vw"
           className="object-cover object-top"

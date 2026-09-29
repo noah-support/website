@@ -157,7 +157,7 @@ export default function IndustryPartnerForm({
       setFormError(
         error instanceof Error
           ? error.message
-          : "Something went wrong. Try again."
+          : "Something went wrong. Try again.",
       );
       setStatus("idle");
     }
@@ -204,208 +204,230 @@ export default function IndustryPartnerForm({
         ) : (
           <div className="industry-in mt-10">
             <GlassPane className="p-6 sm:p-10">
-            <form
-              onSubmit={onSubmit}
-              noValidate
-              className="relative grid grid-cols-1 gap-5 sm:grid-cols-2"
-              aria-describedby={formError ? "partner-form-error" : undefined}
-            >
-              <div className="contact-honeypot" aria-hidden="true">
-                <label htmlFor="partner-website">Website</label>
-                <input
-                  id="partner-website"
-                  name="website"
-                  type="text"
-                  tabIndex={-1}
-                  autoComplete="off"
-                />
-              </div>
-
-              {formError ? (
-                <p
-                  id="partner-form-error"
-                  role="alert"
-                  className="font-body text-sm text-noah-orange sm:col-span-2"
-                >
-                  {formError}
-                </p>
-              ) : null}
-
-              <Field id="first-name" label="First Name" error={errors.firstName}>
-                <input
-                  id="first-name"
-                  name="first_name"
-                  type="text"
-                  autoComplete="given-name"
-                  required
-                  aria-invalid={errors.firstName ? true : undefined}
-                  aria-describedby={
-                    errors.firstName ? "first-name-error" : undefined
-                  }
-                  placeholder="First Name"
-                  className="contact-input"
-                  value={fields.firstName}
-                  onChange={(event) => update("firstName", event.target.value)}
-                />
-              </Field>
-              <Field id="last-name" label="Last Name" error={errors.lastName}>
-                <input
-                  id="last-name"
-                  name="last_name"
-                  type="text"
-                  autoComplete="family-name"
-                  required
-                  aria-invalid={errors.lastName ? true : undefined}
-                  aria-describedby={
-                    errors.lastName ? "last-name-error" : undefined
-                  }
-                  placeholder="Last Name"
-                  className="contact-input"
-                  value={fields.lastName}
-                  onChange={(event) => update("lastName", event.target.value)}
-                />
-              </Field>
-              <Field id="work-email" label="Work Email" error={errors.workEmail}>
-                <input
-                  id="work-email"
-                  name="work_email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  aria-invalid={errors.workEmail ? true : undefined}
-                  aria-describedby={
-                    errors.workEmail ? "work-email-error" : undefined
-                  }
-                  placeholder="Work Email"
-                  className="contact-input"
-                  value={fields.workEmail}
-                  onChange={(event) => update("workEmail", event.target.value)}
-                />
-              </Field>
-              <Field
-                id="company-name"
-                label="Company Name"
-                error={errors.companyName}
+              <form
+                onSubmit={onSubmit}
+                noValidate
+                className="relative grid grid-cols-1 gap-5 sm:grid-cols-2"
+                aria-describedby={formError ? "partner-form-error" : undefined}
               >
-                <input
-                  id="company-name"
-                  name="company_name"
-                  type="text"
-                  autoComplete="organization"
-                  required
-                  aria-invalid={errors.companyName ? true : undefined}
-                  aria-describedby={
-                    errors.companyName ? "company-name-error" : undefined
-                  }
-                  placeholder="Company Name"
-                  className="contact-input"
-                  value={fields.companyName}
-                  onChange={(event) => update("companyName", event.target.value)}
-                />
-              </Field>
-              <Field
-                id="consultants"
-                label="Number of Consultants"
-                error={errors.consultants}
-              >
-                <select
-                  id="consultants"
-                  name="number_consultants"
-                  required
-                  aria-invalid={errors.consultants ? true : undefined}
-                  aria-describedby={
-                    errors.consultants ? "consultants-error" : undefined
-                  }
-                  className="contact-input contact-select"
-                  value={fields.consultants}
-                  onChange={(event) => update("consultants", event.target.value)}
-                >
-                  <option value="">Select one</option>
-                  {PARTNER_APPLY.consultantOptions.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-              <Field id="country" label="Country" error={errors.country}>
-                <input
-                  id="country"
-                  name="country"
-                  type="text"
-                  autoComplete="country-name"
-                  required
-                  aria-invalid={errors.country ? true : undefined}
-                  aria-describedby={errors.country ? "country-error" : undefined}
-                  placeholder="Country"
-                  className="contact-input"
-                  value={fields.country}
-                  onChange={(event) => update("country", event.target.value)}
-                />
-              </Field>
-              <div className="sm:col-span-2">
+                <div className="contact-honeypot" aria-hidden="true">
+                  <label htmlFor="partner-website">Website</label>
+                  <input
+                    id="partner-website"
+                    name="website"
+                    type="text"
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+                </div>
+
+                {formError ? (
+                  <p
+                    id="partner-form-error"
+                    role="alert"
+                    className="font-body text-sm text-noah-orange sm:col-span-2"
+                  >
+                    {formError}
+                  </p>
+                ) : null}
+
                 <Field
-                  id="services"
-                  label="What do you mainly help clients with?"
-                  error={errors.services}
+                  id="first-name"
+                  label="First Name"
+                  error={errors.firstName}
                 >
-                  <textarea
-                    id="services"
-                    name="services"
+                  <input
+                    id="first-name"
+                    name="first_name"
+                    type="text"
+                    autoComplete="given-name"
                     required
-                    rows={4}
-                    aria-invalid={errors.services ? true : undefined}
+                    aria-invalid={errors.firstName ? true : undefined}
                     aria-describedby={
-                      errors.services ? "services-error" : undefined
+                      errors.firstName ? "first-name-error" : undefined
                     }
-                    placeholder="e.g. AI strategy, digital transformation, ERP implementation..."
-                    className="contact-input contact-textarea"
-                    value={fields.services}
-                    onChange={(event) => update("services", event.target.value)}
+                    placeholder="First Name"
+                    className="contact-input"
+                    value={fields.firstName}
+                    onChange={(event) =>
+                      update("firstName", event.target.value)
+                    }
                   />
                 </Field>
-              </div>
-              <div className="sm:col-span-2">
-                <Field id="extra" label="Anything else you want to share?">
-                  <textarea
-                    id="extra"
-                    name="extra"
-                    rows={4}
-                    placeholder="Optional"
-                    className="contact-input contact-textarea"
-                    value={fields.extra}
-                    onChange={(event) => update("extra", event.target.value)}
+                <Field id="last-name" label="Last Name" error={errors.lastName}>
+                  <input
+                    id="last-name"
+                    name="last_name"
+                    type="text"
+                    autoComplete="family-name"
+                    required
+                    aria-invalid={errors.lastName ? true : undefined}
+                    aria-describedby={
+                      errors.lastName ? "last-name-error" : undefined
+                    }
+                    placeholder="Last Name"
+                    className="contact-input"
+                    value={fields.lastName}
+                    onChange={(event) => update("lastName", event.target.value)}
                   />
                 </Field>
-              </div>
-              <div className="sm:col-span-2">
-                <button
-                  type="submit"
-                  disabled={status === "pending"}
-                  className="glass glass-pill flex h-12 w-fit items-center px-7 text-sm font-medium text-noah-ink transition-colors hover:text-noah-orange disabled:opacity-60"
+                <Field
+                  id="work-email"
+                  label="Work Email"
+                  error={errors.workEmail}
                 >
-                  {status === "pending" ? "Applying..." : PARTNER_APPLY.submit}
-                </button>
-                <p className="mt-4 font-body text-[11px] leading-relaxed text-noah-ink-faint">
-                  This site is protected by reCAPTCHA and the Google{" "}
-                  <a
-                    href="https://policies.google.com/privacy"
-                    className="underline decoration-noah-ink-hairline underline-offset-2 transition-colors hover:text-noah-ink"
+                  <input
+                    id="work-email"
+                    name="work_email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    aria-invalid={errors.workEmail ? true : undefined}
+                    aria-describedby={
+                      errors.workEmail ? "work-email-error" : undefined
+                    }
+                    placeholder="Work Email"
+                    className="contact-input"
+                    value={fields.workEmail}
+                    onChange={(event) =>
+                      update("workEmail", event.target.value)
+                    }
+                  />
+                </Field>
+                <Field
+                  id="company-name"
+                  label="Company Name"
+                  error={errors.companyName}
+                >
+                  <input
+                    id="company-name"
+                    name="company_name"
+                    type="text"
+                    autoComplete="organization"
+                    required
+                    aria-invalid={errors.companyName ? true : undefined}
+                    aria-describedby={
+                      errors.companyName ? "company-name-error" : undefined
+                    }
+                    placeholder="Company Name"
+                    className="contact-input"
+                    value={fields.companyName}
+                    onChange={(event) =>
+                      update("companyName", event.target.value)
+                    }
+                  />
+                </Field>
+                <Field
+                  id="consultants"
+                  label="Number of Consultants"
+                  error={errors.consultants}
+                >
+                  <select
+                    id="consultants"
+                    name="number_consultants"
+                    required
+                    aria-invalid={errors.consultants ? true : undefined}
+                    aria-describedby={
+                      errors.consultants ? "consultants-error" : undefined
+                    }
+                    className="contact-input contact-select"
+                    value={fields.consultants}
+                    onChange={(event) =>
+                      update("consultants", event.target.value)
+                    }
                   >
-                    Privacy Policy
-                  </a>{" "}
-                  and{" "}
-                  <a
-                    href="https://policies.google.com/terms"
-                    className="underline decoration-noah-ink-hairline underline-offset-2 transition-colors hover:text-noah-ink"
+                    <option value="">Select one</option>
+                    {PARTNER_APPLY.consultantOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+                <Field id="country" label="Country" error={errors.country}>
+                  <input
+                    id="country"
+                    name="country"
+                    type="text"
+                    autoComplete="country-name"
+                    required
+                    aria-invalid={errors.country ? true : undefined}
+                    aria-describedby={
+                      errors.country ? "country-error" : undefined
+                    }
+                    placeholder="Country"
+                    className="contact-input"
+                    value={fields.country}
+                    onChange={(event) => update("country", event.target.value)}
+                  />
+                </Field>
+                <div className="sm:col-span-2">
+                  <Field
+                    id="services"
+                    label="What do you mainly help clients with?"
+                    error={errors.services}
                   >
-                    Terms of Service
-                  </a>{" "}
-                  apply.
-                </p>
-              </div>
-            </form>
-          </GlassPane>
+                    <textarea
+                      id="services"
+                      name="services"
+                      required
+                      rows={4}
+                      aria-invalid={errors.services ? true : undefined}
+                      aria-describedby={
+                        errors.services ? "services-error" : undefined
+                      }
+                      placeholder="e.g. AI strategy, digital transformation, ERP implementation..."
+                      className="contact-input contact-textarea"
+                      value={fields.services}
+                      onChange={(event) =>
+                        update("services", event.target.value)
+                      }
+                    />
+                  </Field>
+                </div>
+                <div className="sm:col-span-2">
+                  <Field id="extra" label="Anything else you want to share?">
+                    <textarea
+                      id="extra"
+                      name="extra"
+                      rows={4}
+                      placeholder="Optional"
+                      className="contact-input contact-textarea"
+                      value={fields.extra}
+                      onChange={(event) => update("extra", event.target.value)}
+                    />
+                  </Field>
+                </div>
+                <div className="sm:col-span-2">
+                  <button
+                    type="submit"
+                    disabled={status === "pending"}
+                    className="glass glass-orange glass-pill flex h-12 w-fit items-center px-7 text-sm font-medium text-white disabled:opacity-60"
+                  >
+                    {status === "pending"
+                      ? "Applying..."
+                      : PARTNER_APPLY.submit}
+                  </button>
+                  <p className="mt-4 font-body text-[11px] leading-relaxed text-noah-ink-faint">
+                    This site is protected by reCAPTCHA and the Google{" "}
+                    <a
+                      href="https://policies.google.com/privacy"
+                      className="underline decoration-noah-ink-hairline underline-offset-2 transition-colors hover:text-noah-ink"
+                    >
+                      Privacy Policy
+                    </a>{" "}
+                    and{" "}
+                    <a
+                      href="https://policies.google.com/terms"
+                      className="underline decoration-noah-ink-hairline underline-offset-2 transition-colors hover:text-noah-ink"
+                    >
+                      Terms of Service
+                    </a>{" "}
+                    apply.
+                  </p>
+                </div>
+              </form>
+            </GlassPane>
           </div>
         )}
       </div>

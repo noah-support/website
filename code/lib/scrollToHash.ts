@@ -52,33 +52,63 @@ export function homeSectionHref(href: string, pathname: string) {
   return pathname === "/" ? href : `/${href}`;
 }
 
+export function sectionIdFromHref(href: string) {
+  const hashAt = href.indexOf("#");
+  if (hashAt === -1) return "";
+  return decodeURIComponent(href.slice(hashAt + 1).split(/[?&]/)[0] ?? "");
+}
+
+/** The hash in `href` points at a section of the page the reader is already on. */
+export function isSamePageSection(href: string, pathname: string) {
+  const id = sectionIdFromHref(href);
+  if (!id) return false;
+  const hashAt = href.indexOf("#");
+  const path = hashAt === 0 ? pathname : href.slice(0, hashAt) || "/";
+  return path === pathname;
+}
+
 export function isHomeSectionHash(hash: string) {
-  const id = hash.replace("#", "");
+  const id = sectionIdFromHref(hash);
   return Boolean(id) && id !== "top";
 }
 
 export function scrollToHash(hash: string) {
-  const id = hash.replace("#", "");
-  const target = document.getElementById(id);
-  if (!target) return;
+  const id = sectionIdFromHref(hash.includes("#") ? hash : `#${hash}`);
+  if (!id) return;
 
-  beginProgrammaticScroll();
-  ScrollTrigger.refresh();
-  requestAnimationFrame(() => {
-    const top = target.getBoundingClientRect().top + window.scrollY;
+  // Pinned sections mount a moment after a client navigation. A smooth
+  // scroll through those pin spacers also never arrives, so jump once the
+  // target exists and let ScrollTrigger recompute at the landing offset.
+  let tries = 0;
+  const attempt = () => {
+    const target = document.getElementById(id);
+    if (!target) {
+      if (tries++ < 40) window.setTimeout(attempt, 50);
+      return;
+    }
 
-    // refresh() only positions pins correctly for the scroll offset that's
-    // current when it runs — call it again once we've actually arrived,
-    // so whichever trigger we land inside gets evaluated at the right spot
-    // instead of wherever the page happened to be when we kicked this off.
-    function onArrive() {
-      window.removeEventListener("scrollend", onArrive);
+    beginProgrammaticScroll(600);
+    ScrollTrigger.refresh();
+    const header = document.querySelector("header");
+    const offset = header?.getBoundingClientRect().height ?? 0;
+    const top = Math.max(
+      0,
+      target.getBoundingClientRect().top + window.scrollY - offset,
+    );
+    const nextHash = `#${id}`;
+    if (window.location.hash !== nextHash) {
+      window.history.pushState(
+        null,
+        "",
+        `${window.location.pathname}${nextHash}`,
+      );
+    }
+    window.scrollTo({ top, behavior: "auto" });
+    requestAnimationFrame(() => {
       ScrollTrigger.refresh();
       ScrollTrigger.update();
-    }
-    window.addEventListener("scrollend", onArrive);
-    window.setTimeout(onArrive, 1500);
+    });
+  };
 
-    window.scrollTo({ top, behavior: "smooth" });
-  });
+  attempt();
 }

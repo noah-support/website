@@ -151,6 +151,149 @@ body {
   border-radius: 999px;
 }
 
+/* .glass sets position: relative, which would pin this control in flow. */
+.shelf-back {
+  position: absolute;
+}
+
+/* Wide bar is one capsule. On scroll the middle closes and the two ends
+   become the logo pane and the login pill. */
+.nav-split {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  height: 3.5rem;
+  gap: 0;
+  transition: gap 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-split[data-compact] {
+  gap: 0.75rem;
+}
+
+/* Real element, not a ::before. Chrome drops backdrop-filter on a
+   pseudo inside this flex bar, so the full-width state stayed a flat tint.
+   A filter on .nav-split would also become the backdrop root and sample
+   an empty layer. */
+.nav-fill {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: var(--glass-radius);
+  border: 1px solid transparent;
+  opacity: 0;
+}
+
+.nav-split:not([data-compact]) .nav-fill {
+  opacity: 1;
+  border-color: var(--glass-border);
+  background: linear-gradient(180deg, var(--glass-tint-top), var(--glass-tint-bottom));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  box-shadow:
+    0 20px 50px rgba(20, 23, 42, 0.12),
+    inset 0 1px 0 var(--glass-rim),
+    inset 0 -1px 0 rgba(20, 23, 42, 0.04);
+}
+
+.nav-piece {
+  position: relative;
+  z-index: 1;
+}
+
+.nav-split:not([data-compact]) .nav-piece {
+  contain: none;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.nav-piece {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  transition:
+    flex-grow 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-radius 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    padding 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    margin 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-piece-start {
+  flex: 1 1 auto;
+  min-width: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right-color: transparent;
+  padding-inline: 0.85rem;
+}
+
+.nav-spacer {
+  flex: 0 0 auto;
+  width: 0;
+  transition: flex-grow 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-split[data-compact] .nav-spacer {
+  flex: 1 1 auto;
+}
+
+.nav-piece-end {
+  flex: 0 0 auto;
+  gap: 0.25rem;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left-color: transparent;
+  padding-inline: 0.35rem;
+}
+
+.nav-split[data-compact] .nav-piece-start,
+.nav-split[data-compact] .nav-piece-end {
+  flex: 0 0 auto;
+  margin-left: 0;
+  border-color: var(--glass-border);
+  box-shadow:
+    var(--glass-shadow),
+    inset 0 1px 0 var(--glass-rim),
+    inset 0 -1px 0 rgba(20, 23, 42, 0.04);
+}
+
+.nav-split[data-compact] .nav-piece-start {
+  border-radius: var(--glass-radius);
+  padding-inline: 1.15rem;
+}
+
+.nav-split[data-compact] .nav-piece-end {
+  border-radius: 999px;
+  padding: 0.25rem;
+}
+
+.nav-links {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  display: none;
+  translate: -50% -50%;
+  transition:
+    opacity 400ms cubic-bezier(0.22, 1, 0.36, 1),
+    scale 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (min-width: 1024px) {
+  .nav-links {
+    display: flex;
+  }
+}
+
+.nav-split[data-compact] .nav-links {
+  pointer-events: none;
+  opacity: 0;
+  scale: 0.96;
+}
+
 /* Stacked business-case cards on small screens. The glass tint alone is
    see-through, so two titles would read at once while a card flies in. */
 @media (max-width: 639px) {
@@ -200,7 +343,8 @@ body {
 }
 
 @media (prefers-reduced-transparency: reduce) {
-  .glass {
+  .glass,
+  .nav-split:not([data-compact]) .nav-fill {
     backdrop-filter: none;
     background: var(--glass-solid-fallback);
     box-shadow: 0 8px 24px rgba(20, 23, 42, 0.18);
@@ -208,7 +352,8 @@ body {
 }
 
 @media (prefers-contrast: more) {
-  .glass {
+  .glass,
+  .nav-split:not([data-compact]) .nav-fill {
     backdrop-filter: blur(8px);
     background: var(--glass-solid-fallback);
     border-color: currentColor;
@@ -216,7 +361,8 @@ body {
 }
 
 @media (forced-colors: active) {
-  .glass {
+  .glass,
+  .nav-split:not([data-compact]) .nav-fill {
     backdrop-filter: none;
     background: Canvas;
     border: 1px solid CanvasText;
@@ -284,16 +430,6 @@ body {
 .part-slider {
   position: relative;
   overflow: hidden;
-}
-
-.part-slider-fill {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  transform: scaleX(var(--fill, 0));
-  transform-origin: left center;
-  background: linear-gradient(90deg, var(--noah-orange), rgba(235, 92, 28, 0.55));
-  border-radius: inherit;
 }
 
 .part-slider-circle {
@@ -658,16 +794,27 @@ body {
   gap: 0;
   padding-inline: 0;
   padding-block: 4.5rem;
+  overflow-x: auto;
   overscroll-behavior-x: contain;
   scroll-behavior: auto;
   scroll-snap-type: x mandatory;
-  touch-action: pan-x;
+  touch-action: auto;
   user-select: none;
   background: transparent;
+  cursor: grab;
+}
+
+.quote-carousel * {
+  cursor: grab;
+}
+
+.quote-carousel--dragging,
+.quote-carousel--dragging * {
+  cursor: grabbing;
 }
 
 .quote-carousel--dragging {
-  cursor: grabbing;
+  scroll-snap-type: none;
 }
 
 .quote-carousel-card {
@@ -855,6 +1002,21 @@ body {
   opacity: 1;
 }
 
+.cta-burst {
+  z-index: 1;
+  opacity: 0;
+  transform: translate3d(var(--dx), var(--dy), 0) scale(0.2) rotate(var(--from-rot));
+  transition:
+    opacity 380ms var(--ease-out),
+    transform 920ms cubic-bezier(0.16, 1.2, 0.3, 1);
+  transition-delay: calc(var(--i) * 75ms);
+}
+
+.cta-stage[data-burst] .cta-burst {
+  opacity: 1;
+  transform: rotate(var(--rest));
+}
+
 @media (prefers-reduced-motion: reduce) {
   .faq-answer {
     transition: none;
@@ -868,6 +1030,12 @@ body {
 
   .cta-glow {
     transition: opacity 200ms var(--ease-out);
+  }
+
+  .cta-burst {
+    opacity: 1;
+    transform: rotate(var(--rest));
+    transition: none;
   }
 }
 
@@ -907,26 +1075,44 @@ body {
   flex: 1 1 0;
   overflow: hidden;
   isolation: isolate;
-  filter: grayscale(1) brightness(0.72);
   transition:
     flex-grow 320ms var(--ease-in-out),
-    min-height 320ms var(--ease-in-out),
-    filter 320ms var(--ease-out);
+    min-height 320ms var(--ease-in-out);
+}
+
+/* Grayscale stays on the still. A filter on the panel itself would
+   re-rasterize the playing video every frame. */
+.industry-shelf-item > img {
+  filter: grayscale(1) brightness(0.72);
 }
 
 .industry-shelf-item[data-active] {
   flex-grow: 1.12;
   min-height: 32vh;
-  filter: grayscale(0) brightness(1);
+}
+
+.industry-shelf-item[data-active] > img {
+  filter: none;
 }
 
 .industry-shelf-item[data-soon] {
   cursor: default;
+}
+
+.industry-shelf-item[data-soon] > img {
   filter: grayscale(0.72) brightness(0.66);
 }
 
-.industry-shelf-item[data-soon][data-active] {
+.industry-shelf-item[data-soon][data-active] > img {
   filter: grayscale(0.38) brightness(0.8);
+}
+
+.industry-shelf-copy {
+  transition: opacity 320ms var(--ease-out);
+}
+
+.industry-shelf-item:not([data-active]) .industry-shelf-copy {
+  opacity: 0.72;
 }
 
 .industry-shelf-scrim {
@@ -978,12 +1164,23 @@ body {
   justify-content: center;
   background: var(--noah-cream);
   opacity: 1;
-  transition: opacity 400ms var(--ease-out);
+  visibility: visible;
+  transition:
+    opacity 400ms var(--ease-out),
+    visibility 0s linear 0s;
 }
 
 .industry-loader--done {
   pointer-events: none;
   opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 400ms var(--ease-out),
+    visibility 0s linear 400ms;
+}
+
+.industry-loader--done .industry-loader-bar {
+  animation: none;
 }
 
 .industry-loader-track {
@@ -1292,6 +1489,20 @@ body {
   opacity: 1;
 }
 
+.industry-how-block [data-pain] {
+  opacity: 0;
+  transform: scale(0.86);
+  transition:
+    opacity 420ms var(--ease-out),
+    transform 420ms var(--ease-out);
+  transition-delay: 980ms;
+}
+
+.industry-how-block[data-visible] [data-pain] {
+  opacity: 1;
+  transform: scale(1);
+}
+
 .industry-how-block [data-case] {
   opacity: 0;
   transform: translate3d(0, 80px, 0) rotate(calc((var(--i, 0) - 1) * 7deg))
@@ -1327,6 +1538,7 @@ body {
   .industry-how-block [data-step],
   .industry-how-block [data-dot],
   .industry-how-block [data-arrow],
+  .industry-how-block [data-pain],
   .industry-how-block [data-case] {
     opacity: 1;
     transform: none;
@@ -1560,4 +1772,18 @@ body {
 .wp-content .wp-block-image,
 .wp-content .wp-block-embed {
   max-width: 100%;
+}
+
+.wp-content dt {
+  margin-top: 1rem;
+  font-weight: 600;
+}
+
+.wp-content dd {
+  margin: 0.2rem 0 0;
+  color: var(--noah-ink-dim);
+}
+
+.wp-content section {
+  scroll-margin-top: 7rem;
 }

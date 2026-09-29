@@ -176,6 +176,8 @@ export default function ScrollImageSequence({
           >
             <canvas
               ref={canvasRef}
+              role="img"
+              aria-label={title}
               className="max-h-[68vh] w-full max-w-2xl rounded-[28px] object-contain sm:w-1/2"
             />
             <div
@@ -198,7 +200,7 @@ export default function ScrollImageSequence({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={src}
-            alt=""
+            alt={title}
             className="w-full max-w-2xl rounded-[28px] sm:w-1/2"
           />
           <div className="w-full max-w-md sm:w-1/2">

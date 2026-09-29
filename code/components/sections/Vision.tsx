@@ -4,44 +4,42 @@ import { useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "@/lib/gsap";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 import { Aura } from "@/components/Aura";
-import SplitWords from "@/components/SplitWords";
 import ScrollCue from "@/components/ScrollCue";
-import PartSlider, { holdPartGate } from "@/components/PartSlider";
+import PartSlider from "@/components/PartSlider";
 
-const QUOTE_TITLE = "But we're not stopping there.";
-const QUOTE_SUBLINE = "Real change doesn't end with a business case.";
+const QUOTE_TITLE = "Real change doesn't end with a few business cases";
 
-const PAYOFF_TITLE = "Noah takes the work of transformation and does it for you.";
+const PAYOFF_TITLE =
+  "Noah takes the work of transformation and does it for you.";
 const PAYOFF_SUBLINE =
-  "Noah is going to take charge of everything — from discovery and building the first MVP to management and support of the final build.";
+  "Noah is taking charge of everything. From discovery and building the first MVP to management and support of the final build.";
 
-/** Everything after discovery is on the roadmap, not on sale. */
 const AVAILABILITY_NOTE = "Coming end of 2026";
 
 const STAGES = [
   {
     title: "Discovery",
     description:
-      "We interview a whole department bottom-up, surface real operational insight, and turn it into concrete business cases.",
+      "Noah interviews a whole department to surface real operational insights. Turning them into actionable business cases instantly.",
     available: true,
   },
   {
     title: "Scoping",
     description:
-      "We prepare the organisation to act — who champions the change, who needs convincing, and what a first experiment should actually test.",
-    available: false,
+      "We prepare your business to act, identifying who will lead the change, who needs convincing, what questions to ask, and exactly what to test first.",
+    available: true,
   },
   {
     title: "MVP experiment",
     description:
       "We build and run a live proof of concept, measuring both the numbers and how the team experiences the change.",
-    available: false,
+    available: true,
   },
   {
     title: "Evaluate",
     description:
-      "We read the experiment back with you and decide: build the business case out into a production version, or leave it at that.",
-    available: false,
+      "Once the results are in, Noah presents the insights and gives you a clear choice: build the fix, or improve the business case.",
+    available: true,
   },
 ] as const;
 
@@ -67,9 +65,6 @@ function beat(start: number, end: number) {
  * play units, then scaled by PLAY so extra pin length lands after the morph
  * instead of stretching every beat.
  */
-const QUOTE_OUT = beat(0.15, 0.21);
-// A beat of empty cream between the quote leaving and the circle arriving —
-// overlapping the two left both scenes readable at once.
 const CIRCLE_IN = beat(0.26, 0.32);
 const CIRCLE_RUN = beat(0.32, 0.64);
 const SPIN = beat(0.64, 0.95);
@@ -82,14 +77,15 @@ const AURA_IN = beat(0.84, 0.96);
 const PAYOFF_IN = beat(0.94, 0.99);
 
 /**
- * The aura + copy have finished assembling. From here the part gate holds
- * the scene until the reader fills the slider — the extra pin length is
- * that held zone, not free scroll into Clients.
+ * The opening line scrolls away on its own. The pin starts once the circle
+ * is fully in, and maps its own 0–1 onto the rest of the original scene.
  */
-const GATE_AT = PAYOFF_IN[1];
-const GATE_RELEASE = PAYOFF_IN[0] - 0.06;
-/** Remaining pin after the gate, plus a beat to land in Clients. */
-const GATE_RELEASE_VH = PIN_VH * (1 - GATE_AT) + 0.45;
+const SCENE_START = CIRCLE_IN[1];
+const PIN_SCROLL_VH = PIN_VH * (1 - SCENE_START);
+
+function sceneProgress(pinProgress: number) {
+  return SCENE_START + pinProgress * (1 - SCENE_START);
+}
 
 /** How much wider the circle throws itself at full spin. */
 const SWELL = 1.1;
@@ -155,7 +151,6 @@ const PARTICLES = Array.from({ length: PARTICLE_COUNT }, (_, i) => {
 
 export default function Vision() {
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const quoteRef = useRef<HTMLDivElement>(null);
   const circleLayerRef = useRef<HTMLDivElement>(null);
   const circleBoxRef = useRef<HTMLDivElement>(null);
   const stageTextRef = useRef<HTMLDivElement>(null);
@@ -164,26 +159,18 @@ export default function Vision() {
   const progressCircleRef = useRef<SVGCircleElement>(null);
   const auraRef = useRef<HTMLDivElement>(null);
   const payoffTextRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
   const particleRefs = useRef<(HTMLSpanElement | null)[]>([]);
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [auraOn, setAuraOn] = useState(false);
-  const [gateActive, setGateActive] = useState(false);
-  const releasedRef = useRef(false);
+  const [hintActive, setHintActive] = useState(false);
   const reducedMotion = useReducedMotion();
 
   useLayoutEffect(() => {
     if (reducedMotion || !wrapperRef.current) return;
 
     const ctx = gsap.context(() => {
-      const words =
-        quoteRef.current?.querySelectorAll(".split-word") ?? [];
-      const quoteSub =
-        quoteRef.current?.querySelector("[data-sub]") ?? [];
-
-      gsap.set(words, { opacity: 0, y: 14 });
-      gsap.set(quoteSub, { opacity: 0, y: 10 });
-
       // Distance from the circle's resting spot to the middle of the pinned
       // stage. Measured against the wrapper rather than the viewport so the
       // number is the same whether or not the section is currently pinned.
@@ -205,7 +192,7 @@ export default function Vision() {
       // Everything below is written by the rAF loop from an eased copy of
       // the scroll-driven target, so the reset on reverse reads as a snap
       // back rather than a teleport.
-      let progress = 0;
+      let progress = SCENE_START;
       let lastScroll = 0;
       let forwardPx = 0;
       let backwardPx = 0;
@@ -220,7 +207,7 @@ export default function Vision() {
       let rotation = 0;
       let auraValue = 0;
       let liftValue = 0;
-      let circleValue = 0;
+      let circleValue = 1;
       let stageTextValue = 1;
       let payoffValue = 0;
 
@@ -251,8 +238,7 @@ export default function Vision() {
           const ramp = spinVisual * spinVisual;
           // Once the aura owns the frame, stop adding speed so the hold
           // isn't a blender behind the copy.
-          rotation +=
-            dt * (spinVisual * 90 + ramp * 1500) * (1 - auraValue);
+          rotation += dt * (spinVisual * 90 + ramp * 1500) * (1 - auraValue);
         }
 
         // The travel to centre finishes early in the spin, so the circle is
@@ -283,14 +269,16 @@ export default function Vision() {
           }
           const flight = local * local;
           const angle =
-            cfg.angle + (rotation * Math.PI) / 180 * 0.15 + flight * cfg.drift;
+            cfg.angle +
+            ((rotation * Math.PI) / 180) * 0.15 +
+            flight * cfg.drift;
           const r = RADIUS + flight * cfg.distance;
           el.style.transform = `translate3d(${Math.cos(angle) * r}px, ${
             Math.sin(angle) * r
           }px, 0)`;
           // In quickly, then gone before the aura has fully taken over.
           el.style.opacity = String(
-            Math.min(1, local * 5) * (1 - clamp01((local - 0.55) / 0.45))
+            Math.min(1, local * 5) * (1 - clamp01((local - 0.55) / 0.45)),
           );
         }
 
@@ -324,6 +312,9 @@ export default function Vision() {
         if (stageTextRef.current) {
           stageTextRef.current.style.opacity = String(stageTextValue);
         }
+        if (titleRef.current) {
+          titleRef.current.style.opacity = String(stageTextValue);
+        }
         // The stage number and the stage dots ride inside the circle, so
         // they swell with it — both have to be gone before that reads as a
         // typo the size of a fist. The ring is the only thing left turning.
@@ -353,14 +344,14 @@ export default function Vision() {
         scrollTrigger: {
           trigger: wrapperRef.current,
           start: "top top",
-          end: `+=${PIN_VH * 100}%`,
+          end: `+=${PIN_SCROLL_VH * 100}%`,
           scrub: 0.5,
           pin: true,
           pinType: "fixed",
           anticipatePin: 1,
           onRefresh: measure,
           onUpdate: (self) => {
-            const p = self.progress;
+            const p = sceneProgress(self.progress);
             progress = p;
 
             // Direction comes from the raw scroll position, not from
@@ -369,14 +360,7 @@ export default function Vision() {
             // the reset flicker on and off. Both edges need sustained
             // travel, so a touchpad bounce settles nothing.
             const y = self.scroll();
-            // The part gate clamps scroll at GATE_AT. That yank is
-            // backward in the numbers, so without this guard a flick past
-            // "Go to part 5" snaps the scene back to Evaluate.
-            if (releasedRef.current || p >= GATE_AT - 0.01) {
-              reversed = false;
-              forwardPx = 0;
-              backwardPx = 0;
-            } else if (y < lastScroll - 1) {
+            if (y < lastScroll - 1) {
               backwardPx += lastScroll - y;
               forwardPx = 0;
               if (backwardPx > REVERSE_PX) reversed = true;
@@ -392,35 +376,26 @@ export default function Vision() {
             }
             lastScroll = y;
 
-            const quoteOut = span(p, QUOTE_OUT);
-            if (quoteRef.current) {
-              quoteRef.current.style.opacity = String(1 - quoteOut);
-              quoteRef.current.style.transform = `translateY(${-40 * quoteOut}px)`;
-            }
-
             const t = span(p, CIRCLE_RUN);
             const index = Math.min(STAGES.length - 1, Math.floor(t * 4));
             setActiveIndex((prev) => (prev === index ? prev : index));
             if (progressCircleRef.current) {
               progressCircleRef.current.style.strokeDashoffset = String(
-                CIRCUMFERENCE * (1 - t)
+                CIRCUMFERENCE * (1 - t),
               );
             }
 
             spinTarget = span(p, SPIN);
             setAuraOn((prev) => prev || p > AURA_IN[0] - 0.1);
-            holdPartGate(self, GATE_AT, GATE_RELEASE, releasedRef, setGateActive);
+            const showHint = p >= PAYOFF_IN[0] && p < 1;
+            setHintActive((prev) => (prev === showHint ? prev : showHint));
           },
         },
       });
 
-      // The quote assembles inside the first tenth of the pin and the rest
-      // of the timeline is an empty hold, so timeline units line up with the
-      // progress breakpoints above (10 units = full progress) instead of
-      // stretching the word reveal across the whole scene.
-      tl.to(words, { opacity: 1, y: 0, duration: 0.6, stagger: 0.05 }, 0)
-        .to(quoteSub, { opacity: 1, y: 0, duration: 0.6 }, 0.5)
-        .to({}, { duration: 8.9 }, 1.1);
+      // ScrollTrigger is attached to the timeline, so it needs a tween.
+      // The scene itself is driven from onUpdate, not from this tween.
+      tl.to({}, { duration: 1 });
 
       measure();
 
@@ -438,13 +413,16 @@ export default function Vision() {
 
   if (reducedMotion) {
     return (
-      <section id="vision" className="flex flex-col gap-16 px-6 py-28 sm:px-16">
+      <section id="vision" className="flex flex-col gap-10 px-6 py-28 sm:px-16">
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="font-display text-4xl leading-[1.08] tracking-tight sm:text-5xl">
-            {QUOTE_TITLE}
+          <p className="industry-in font-body text-xs uppercase tracking-[0.18em] text-noah-ink-dim">
+            What you get
+          </p>
+          <h2 className="industry-in mt-4 font-display text-4xl tracking-tight sm:text-5xl">
+            Business cases, ready to implement.
           </h2>
-          <p className="mt-5 font-body text-noah-ink-dim sm:text-lg">
-            {QUOTE_SUBLINE}
+          <p className="mt-4 font-display text-2xl tracking-tight sm:text-3xl">
+            Our way of working
           </p>
         </div>
         <div className="mx-auto flex w-full max-w-2xl flex-col gap-10">
@@ -454,14 +432,14 @@ export default function Vision() {
               className={`flex gap-5 ${stage.available ? "" : "opacity-55"}`}
             >
               <span
-                className={`font-display text-2xl ${
+                className={`font-display text-xl ${
                   stage.available ? "text-noah-orange" : "text-noah-ink-faint"
                 }`}
               >
                 0{index + 1}
               </span>
               <div>
-                <p className="font-display text-2xl tracking-tight">
+                <p className="font-display text-xl tracking-tight">
                   {stage.title}
                 </p>
                 {!stage.available && (
@@ -496,144 +474,139 @@ export default function Vision() {
         ref={wrapperRef}
         className="relative h-screen overflow-hidden px-6 sm:px-16"
       >
-        {/* Beat 1 — the turn into the vision. */}
-        <div
-          ref={quoteRef}
-          className="absolute inset-0 flex flex-col items-center justify-center gap-6 px-6 text-center"
-        >
-          <SplitWords
-            text={QUOTE_TITLE}
-            className="max-w-4xl font-display text-4xl leading-[1.08] tracking-tight sm:text-6xl"
-          />
-          <p
-            data-sub
-            className="max-w-xl font-body text-noah-ink-dim sm:text-lg"
-          >
-            {QUOTE_SUBLINE}
-          </p>
-        </div>
-
-        {/* Beat 2 — the way of working, one stage at a time. */}
+        {/* The way of working, one stage at a time, then the spin into the aura. */}
         <div
           ref={circleLayerRef}
-          className="absolute inset-0 flex flex-col items-center justify-center gap-12 opacity-0 sm:flex-row sm:gap-20"
+          className="absolute inset-0 flex flex-col items-center justify-start px-6 pt-24 sm:pt-28"
         >
-          <div
-            ref={circleBoxRef}
-            className="relative h-64 w-64 shrink-0 will-change-transform sm:h-80 sm:w-80"
+          <p className="font-body pb-4 text-xs uppercase tracking-[0.18em] text-noah-ink-dim">
+            but Noah doesn&apos;t stop there.
+          </p>
+          <h2
+            ref={titleRef}
+            className="max-w-4xl text-center font-display text-3xl leading-[1.08] tracking-tight sm:text-5xl"
           >
-            <svg viewBox="0 0 200 200" className="h-full w-full">
-              <circle
-                cx="100"
-                cy="100"
-                r={RADIUS}
-                fill="none"
-                stroke="rgba(20,23,42,0.12)"
-                strokeWidth="1"
-              />
-              <circle
-                ref={progressCircleRef}
-                cx="100"
-                cy="100"
-                r={RADIUS}
-                fill="none"
-                stroke="var(--noah-orange)"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeDasharray={CIRCUMFERENCE}
-                strokeDashoffset={CIRCUMFERENCE}
-                transform="rotate(-90 100 100)"
-              />
-              <g ref={stageDotsRef}>
-                {STAGES.map((item, index) => {
-                  const { x, y } = dotPosition(index);
-                  const visible = activeIndex >= index;
-                  const current = activeIndex === index;
-                  return (
-                    <circle
-                      key={item.title}
-                      cx={x}
-                      cy={y}
-                      r={current ? 6 : 4}
-                      fill={
-                        current
-                          ? item.available
-                            ? "var(--noah-orange)"
-                            : "var(--noah-ink-faint)"
-                          : item.available
-                            ? "var(--noah-ink)"
-                            : "var(--noah-ink-faint)"
-                      }
-                      style={{
-                        opacity: visible ? 1 : 0,
-                        transition: "opacity 400ms ease, r 300ms ease",
-                      }}
-                    />
-                  );
-                })}
-              </g>
-            </svg>
+            {QUOTE_TITLE}
+          </h2>
+          <div className="mt-4 flex w-full flex-col items-center justify-center gap-6 sm:mt-6 sm:flex-row sm:gap-16">
             <div
-              ref={stageNumberRef}
-              className="pointer-events-none absolute inset-0 flex items-center justify-center"
+              ref={circleBoxRef}
+              className="relative h-52 w-52 shrink-0 will-change-transform sm:h-72 sm:w-72"
             >
-              <span
-                className={`font-display text-3xl ${
-                  stage.available ? "text-noah-ink" : "text-noah-ink-faint"
-                }`}
-              >
-                0{activeIndex + 1}
-              </span>
-            </div>
-
-            {/* Sparks thrown off once the circle closes and spins up. */}
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-              {PARTICLES.map((particle, index) => (
-                <span
-                  key={index}
-                  ref={(el) => {
-                    particleRefs.current[index] = el;
-                  }}
-                  aria-hidden
-                  className="absolute rounded-full opacity-0 will-change-transform"
-                  style={{
-                    width: particle.size,
-                    height: particle.size,
-                    background: particle.warm
-                      ? "var(--noah-orange)"
-                      : "var(--noah-indigo)",
-                  }}
+              <svg viewBox="0 0 200 200" className="h-full w-full">
+                <circle
+                  cx="100"
+                  cy="100"
+                  r={RADIUS}
+                  fill="none"
+                  stroke="rgba(20,23,42,0.12)"
+                  strokeWidth="1"
                 />
-              ))}
-            </div>
-          </div>
-
-          <div
-            ref={stageTextRef}
-            className="w-full max-w-md text-center sm:text-left"
-          >
-            <p className="font-body text-xs uppercase tracking-[0.18em] text-noah-ink-dim">
-              Our way of working — {activeIndex + 1} of {STAGES.length}
-            </p>
-            <div
-              className={
-                stage.available
-                  ? ""
-                  : "opacity-60 transition-opacity duration-500"
-              }
-            >
-              <h2 className="mt-4 font-display text-4xl tracking-tight sm:text-5xl">
-                {stage.title}
-              </h2>
-              {!stage.available && (
-                <span className="mt-4 inline-flex items-center gap-2 rounded-full border border-noah-ink-hairline px-3 py-1 font-body text-[10px] uppercase tracking-[0.16em] text-noah-ink-faint">
-                  <span className="h-1 w-1 rounded-full bg-noah-ink-faint" />
-                  {AVAILABILITY_NOTE}
+                <circle
+                  ref={progressCircleRef}
+                  cx="100"
+                  cy="100"
+                  r={RADIUS}
+                  fill="none"
+                  stroke="var(--noah-orange)"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeDasharray={CIRCUMFERENCE}
+                  strokeDashoffset={CIRCUMFERENCE}
+                  transform="rotate(-90 100 100)"
+                />
+                <g ref={stageDotsRef}>
+                  {STAGES.map((item, index) => {
+                    const { x, y } = dotPosition(index);
+                    const visible = activeIndex >= index;
+                    const current = activeIndex === index;
+                    return (
+                      <circle
+                        key={item.title}
+                        cx={x}
+                        cy={y}
+                        r={current ? 6 : 4}
+                        fill={
+                          current
+                            ? item.available
+                              ? "var(--noah-orange)"
+                              : "var(--noah-ink-faint)"
+                            : item.available
+                              ? "var(--noah-ink)"
+                              : "var(--noah-ink-faint)"
+                        }
+                        style={{
+                          opacity: visible ? 1 : 0,
+                          transition: "opacity 400ms ease, r 300ms ease",
+                        }}
+                      />
+                    );
+                  })}
+                </g>
+              </svg>
+              <div
+                ref={stageNumberRef}
+                className="pointer-events-none absolute inset-0 flex items-center justify-center"
+              >
+                <span
+                  className={`font-display text-3xl ${
+                    stage.available ? "text-noah-ink" : "text-noah-ink-faint"
+                  }`}
+                >
+                  0{activeIndex + 1}
                 </span>
-              )}
-              <p className="mt-5 font-body text-noah-ink-dim sm:text-lg">
-                {stage.description}
+              </div>
+
+              {/* Sparks thrown off once the circle closes and spins up. */}
+              <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                {PARTICLES.map((particle, index) => (
+                  <span
+                    key={index}
+                    ref={(el) => {
+                      particleRefs.current[index] = el;
+                    }}
+                    aria-hidden
+                    className="absolute rounded-full opacity-0 will-change-transform"
+                    style={{
+                      width: particle.size,
+                      height: particle.size,
+                      background: particle.warm
+                        ? "var(--noah-orange)"
+                        : "var(--noah-indigo)",
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div
+              ref={stageTextRef}
+              className="w-full max-w-md text-center sm:text-left"
+            >
+              <p className="mt-2 font-body text-xs uppercase tracking-[0.18em] text-noah-ink-dim">
+                {activeIndex + 1} of {STAGES.length}{" "}
+                <span>Our way of working</span>
               </p>
+              <div
+                className={
+                  stage.available
+                    ? ""
+                    : "opacity-60 transition-opacity duration-500"
+                }
+              >
+                <h3 className="mt-3 font-display text-xl tracking-tight sm:text-2xl">
+                  {stage.title}
+                </h3>
+                {!stage.available && (
+                  <span className="mt-4 inline-flex items-center gap-2 rounded-full border border-noah-ink-hairline px-3 py-1 font-body text-[10px] uppercase tracking-[0.16em] text-noah-ink-faint">
+                    <span className="h-1 w-1 rounded-full bg-noah-ink-faint" />
+                    {AVAILABILITY_NOTE}
+                  </span>
+                )}
+                <p className="mt-3 font-body text-sm text-noah-ink-dim sm:text-base">
+                  {stage.description}
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -671,14 +644,7 @@ export default function Vision() {
         <ScrollCue />
       </div>
 
-      <PartSlider
-        nextPart={5}
-        forceActive={gateActive}
-        releaseVh={GATE_RELEASE_VH}
-        onReleaseChange={(value) => {
-          releasedRef.current = value;
-        }}
-      />
+      <PartSlider nextPart={4} forceActive={hintActive} />
     </section>
   );
 }

@@ -2,6 +2,9 @@ import { regardLabel, type ContactPayload } from "./contact";
 import type { PartnerPayload } from "./partner";
 import type { TradePayload } from "./trade";
 
+const FORM_FROM_EMAIL = "contact@noah.support";
+const FORM_FROM_NAME = "Noah";
+
 type InboundAttachment = {
   content: string;
   filename: string;
@@ -10,15 +13,15 @@ type InboundAttachment = {
 
 async function sendInboundEmail({
   log,
-  fromEmail,
-  fromName,
+  replyToEmail,
+  replyToName,
   subject,
   text,
   attachments,
 }: {
   log: string;
-  fromEmail: string;
-  fromName: string;
+  replyToEmail: string;
+  replyToName: string;
   subject: string;
   text: string;
   attachments?: InboundAttachment[];
@@ -28,7 +31,7 @@ async function sendInboundEmail({
 
   if (!apiKey || !to) {
     console.warn(
-      `[${log}] Email is not configured. Message from ${fromEmail} was not sent.`
+      `[${log}] Email is not configured. Message from ${replyToEmail} was not sent.`
     );
     return { ok: true as const, delivered: false };
   }
@@ -41,8 +44,8 @@ async function sendInboundEmail({
     },
     body: JSON.stringify({
       personalizations: [{ to: [{ email: to }] }],
-      from: { email: fromEmail, name: fromName },
-      reply_to: { email: fromEmail, name: fromName },
+      from: { email: FORM_FROM_EMAIL, name: FORM_FROM_NAME },
+      reply_to: { email: replyToEmail, name: replyToName },
       subject,
       content: [{ type: "text/plain", value: text }],
       ...(attachments?.length
@@ -70,8 +73,8 @@ async function sendInboundEmail({
 export async function sendContactEmail(payload: ContactPayload) {
   return sendInboundEmail({
     log: "contact",
-    fromEmail: payload.email,
-    fromName: payload.name,
+    replyToEmail: payload.email,
+    replyToName: payload.name,
     subject: `${regardLabel(payload.regard)} from ${payload.name}`,
     text: [
       `Name: ${payload.name}`,
@@ -88,8 +91,8 @@ export async function sendPartnerEmail(payload: PartnerPayload) {
   const name = `${payload.firstName} ${payload.lastName}`;
   return sendInboundEmail({
     log: "partner",
-    fromEmail: payload.workEmail,
-    fromName: name,
+    replyToEmail: payload.workEmail,
+    replyToName: name,
     subject: `Partnership from ${name}`,
     text: [
       `Name: ${name}`,
@@ -113,8 +116,8 @@ export async function sendTradeEmail(
 ) {
   return sendInboundEmail({
     log: "trade",
-    fromEmail: payload.email,
-    fromName: payload.name || payload.email,
+    replyToEmail: payload.email,
+    replyToName: payload.name || payload.email,
     subject: `Slide deck from ${payload.name || payload.email}`,
     text: [
       payload.name ? `Name: ${payload.name}` : "",

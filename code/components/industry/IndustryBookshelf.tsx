@@ -11,6 +11,7 @@ import { gsap } from "@/lib/gsap";
 import AnimatedBackdrop from "@/components/AnimatedBackdrop";
 import SplitWords from "@/components/SplitWords";
 import BookshelfScrollHint from "@/components/BookshelfScrollHint";
+import { ShelfBackButton } from "@/components/Header";
 import { INDUSTRIES } from "@/lib/industries";
 import { useReducedMotion } from "@/lib/useReducedMotion";
 
@@ -27,7 +28,8 @@ function preloadImage(src: string) {
 
 export default function IndustryBookshelf() {
   const [ready, setReady] = useState(false);
-  const [active, setActive] = useState(INDUSTRIES[0]?.slug ?? "");
+  const [hovered, setHovered] = useState<string | null>(null);
+  const active = hovered ?? INDUSTRIES[0]?.slug ?? "";
   const titleRef = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
 
@@ -38,10 +40,7 @@ export default function IndustryBookshelf() {
     }, 8000);
 
     void Promise.all(
-      INDUSTRIES.flatMap((industry) => [
-        preloadImage(industry.poster),
-        preloadImage(industry.video),
-      ])
+      INDUSTRIES.map((industry) => preloadImage(industry.poster))
     ).then(() => {
       if (!cancelled) setReady(true);
     });
@@ -77,6 +76,7 @@ export default function IndustryBookshelf() {
 
   return (
     <main className="relative bg-noah-cream xl:h-[100dvh] xl:overflow-hidden xl:bg-noah-navy-deep">
+      <ShelfBackButton />
       <div
         aria-hidden={!ready}
         className={`industry-loader ${ready ? "industry-loader--done" : ""}`}
@@ -106,7 +106,15 @@ export default function IndustryBookshelf() {
         </p>
       </div>
 
-      <div className="industry-shelf xl:absolute xl:inset-0">
+      <div
+        className="industry-shelf xl:absolute xl:inset-0"
+        onPointerLeave={() => setHovered(null)}
+        onBlur={(event) => {
+          const next = event.relatedTarget;
+          if (next instanceof Node && event.currentTarget.contains(next)) return;
+          setHovered(null);
+        }}
+      >
         {INDUSTRIES.map((industry) => {
           const isActive = industry.slug === active;
           return (
@@ -114,19 +122,19 @@ export default function IndustryBookshelf() {
               key={industry.slug}
               href={`/industry/${industry.slug}`}
               aria-current={isActive ? "page" : undefined}
-              onPointerEnter={() => setActive(industry.slug)}
-              onMouseEnter={() => setActive(industry.slug)}
-              onFocus={() => setActive(industry.slug)}
+              onPointerEnter={() => setHovered(industry.slug)}
+              onFocus={() => setHovered(industry.slug)}
               data-active={isActive ? "" : undefined}
               className="industry-shelf-item"
             >
               <AnimatedBackdrop
                 poster={industry.poster}
-                motion={industry.video}
-                animate={ready && isActive && !reducedMotion}
+                motion={industry.video.replace(/\.avif$/i, ".mp4")}
+                alt={industry.name}
+                animate={ready && hovered === industry.slug && !reducedMotion}
               />
               <span className="industry-shelf-scrim" aria-hidden />
-              <span className="relative z-10 mt-auto px-5 py-6 sm:px-7 sm:py-8">
+              <span className="industry-shelf-copy relative z-10 mt-auto px-5 py-6 sm:px-7 sm:py-8">
                 <span className="font-display text-2xl leading-[1.1] tracking-tight text-noah-fog sm:text-3xl">
                   {industry.name}
                 </span>

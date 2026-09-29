@@ -3,27 +3,33 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import CompanyLegal from "@/components/CompanyLegal";
-import { homeSectionHref, scrollToHash, scrollToTop } from "@/lib/scrollToHash";
+import {
+  homeSectionHref,
+  isSamePageSection,
+  scrollToHash,
+  scrollToTop,
+} from "@/lib/scrollToHash";
 
 const COLUMNS = [
   {
     title: "Company",
     links: [
       { label: "About us", href: "/about" },
-      { label: "The problem", href: "#problem" },
-      { label: "The solution", href: "#solution" },
-      { label: "Our way of working", href: "#vision" },
+      { label: "The problem", href: "/#problem" },
+      { label: "The solution", href: "/#solution" },
+      { label: "Our way of working", href: "/#vision" },
+      { label: "Why Noah", href: "/why-noah" },
       { label: "Industries", href: "/industry" },
     ],
   },
   {
     title: "Work with us",
     links: [
-      { label: "Clients", href: "#clients" },
-      { label: "Pricing", href: "#pricing" },
-      { label: "FAQ", href: "#faq" },
+      { label: "Clients", href: "/#clients" },
+      { label: "Pricing", href: "/#pricing" },
       { label: "Book a call", href: "/book" },
       { label: "Contact", href: "/contact" },
+      { label: "FAQ", href: "/contact#faq" },
       { label: "Jobs", href: "/jobs" },
     ],
   },
@@ -72,14 +78,11 @@ export default function Footer() {
                     <li key={link.href}>
                       <Link
                         href={homeSectionHref(link.href, pathname)}
-                        onClick={
-                          link.href.startsWith("#") && pathname === "/"
-                            ? (event) => {
-                                event.preventDefault();
-                                scrollToHash(link.href);
-                              }
-                            : undefined
-                        }
+                        onClick={(event) => {
+                          if (!isSamePageSection(link.href, pathname)) return;
+                          event.preventDefault();
+                          scrollToHash(link.href);
+                        }}
                         className="font-body text-sm text-noah-ink transition-colors hover:text-noah-orange"
                       >
                         {link.label}
@@ -100,12 +103,6 @@ export default function Footer() {
               className="transition-colors hover:text-noah-ink"
             >
               Terms &amp; conditions
-            </Link>
-            <Link
-              href="/ai-audit"
-              className="transition-colors hover:text-noah-ink"
-            >
-              AI audit
             </Link>
             <Link
               href="/cookies"

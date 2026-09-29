@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "@/lib/gsap";
 import AnimatedBackdrop from "@/components/AnimatedBackdrop";
 import PartnerHeroKpi from "@/components/industry/PartnerHeroKpi";
@@ -48,7 +43,7 @@ export default function IndustryPartnerHero({
     }).to(
       rest,
       { opacity: 1, y: 0, duration: 0.5, stagger: 0.08, ease: "power2.out" },
-      "-=0.1"
+      "-=0.1",
     );
     return () => {
       tl.kill();
@@ -60,6 +55,7 @@ export default function IndustryPartnerHero({
       <AnimatedBackdrop
         poster={industry.poster}
         motion={industry.video}
+        alt={industry.name}
         animate={!reducedMotion}
         onReady={() => setReady(true)}
       />
@@ -86,7 +82,7 @@ export default function IndustryPartnerHero({
                 event.preventDefault();
                 scrollToHash("#apply");
               }}
-              className="glass glass-pill mt-10 flex h-12 w-fit items-center px-7 text-sm font-medium text-noah-ink transition-colors hover:text-noah-orange"
+              className="glass glass-orange glass-pill mt-10 flex h-12 w-fit items-center px-7 text-sm font-medium text-white"
             >
               Apply to partner
             </a>

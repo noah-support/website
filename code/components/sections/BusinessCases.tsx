@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import GlassPane from "@/components/GlassPane";
 
 const CASES = [
@@ -35,40 +36,29 @@ const CASES = [
 
 export default function BusinessCases() {
   return (
-    <section className="relative flex min-h-screen flex-col items-center justify-center gap-8 px-6 py-16 sm:gap-12 sm:px-16 sm:py-20">
-      <div className="max-w-2xl text-center">
-        <p
-          data-roll
-          className="font-body text-xs uppercase tracking-[0.18em] text-noah-ink-dim"
-        >
+    <section className="relative flex w-full flex-col items-center justify-center gap-8 px-6 py-16 sm:gap-12 sm:px-16 sm:py-20">
+      <div className="industry-how-copy max-w-2xl text-center">
+        <p className="industry-in font-body text-xs uppercase tracking-[0.18em] text-noah-ink-dim">
           What you get
         </p>
-        <h2
-          data-roll
-          className="mt-4 font-display text-4xl tracking-tight sm:text-5xl"
-        >
-          Business cases, ready to implement.
+        <h2 className="industry-in mt-4 font-display text-4xl tracking-tight sm:text-5xl">
+          Business cases, ready for implement.
         </h2>
-        <p data-roll className="mt-5 font-body text-noah-ink-dim sm:text-lg">
-          Finally, each one ranked, priced, and traced straight back to what
-          your team told us.
+        <p className="industry-in mt-5 font-body text-noah-ink-dim sm:text-lg">
+          Finally, every business case is ranked and traced straight back to
+          your team&apos;s feedback
         </p>
       </div>
       <div
-        className="grid w-full max-w-md grid-cols-1 sm:max-w-6xl sm:grid-cols-3 sm:gap-8"
+        className="grid w-full max-w-md grid-cols-1 gap-8 sm:max-w-6xl sm:grid-cols-3"
         style={{ perspective: "1400px" }}
       >
         {CASES.map((item, index) => (
-          // Wrapper carries the scroll-linked tumble; the pane inside carries
-          // the pointer-tracked tilt. Two elements, so the two transforms
-          // never overwrite each other.
-          // Inside the pinned stage, every card shares one grid cell so they
-          // can stack into a deck. Outside it (reduced motion) they stay a list.
           <div
             data-case
             key={item.rank}
-            className="h-full [.h-screen_&]:max-sm:col-start-1 [.h-screen_&]:max-sm:row-start-1"
-            style={{ zIndex: index + 1 }}
+            className="h-full"
+            style={{ "--i": index, zIndex: index + 1 } as CSSProperties}
           >
             <BusinessCaseCard {...item} />
           </div>
