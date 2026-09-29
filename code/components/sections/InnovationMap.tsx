@@ -14,14 +14,21 @@ const BANDS = [
 
 const CHASM = 0.27;
 
-const MARKERS = [
+type Marker = {
+  name: string;
+  t: number;
+  lift: number;
+  dx?: number;
+};
+
+const MARKERS: readonly Marker[] = [
   { name: "Luis", t: 0.05, lift: 40 },
   { name: "Sarah", t: 0.18, lift: 44 },
   { name: "Cesar", t: 0.34, lift: 36 },
   { name: "Anna", t: 0.46, lift: 40 },
   { name: "Emmy", t: 0.66, lift: 36 },
   { name: "Denis", t: 0.9, lift: 32 },
-] as const;
+];
 
 function bell(t: number) {
   const z = (t - 0.46) / 0.175;
@@ -146,7 +153,7 @@ export default function InnovationMap() {
           const x = gx(marker.t);
           const y = gy(marker.t);
           const lift = marker.lift;
-          const labelX = round1(x + ("dx" in marker ? marker.dx : 0));
+          const labelX = round1(x + (marker.dx ?? 0));
           const stemTop = round1(y - 7);
           const labelY = round1(y - lift);
           const stemEnd = round1(labelY + 4);

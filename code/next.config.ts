@@ -35,6 +35,7 @@ function wordpressImagePatterns(): ImagePattern[] {
 }
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   allowedDevOrigins: ["192.168.20.80"],
   images: {
     formats: ["image/avif", "image/webp"],

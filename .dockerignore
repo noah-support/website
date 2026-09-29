@@ -1,0 +1,7 @@
+.git
+**/.DS_Store
+code/node_modules
+code/.next
+code/.env
+code/.env.*
+!code/.env.example
