@@ -145,14 +145,14 @@ export default function Header() {
           </nav>
 
           <div className="nav-piece nav-piece-end glass">
-            <Link
-              href="/login"
+            <a
+              href="https://hub.noah.support/login"
               className={`${
                 compact ? "flex" : "hidden sm:flex"
-              } h-10 items-center px-3 font-display text-base font-medium text-noah-ink transition-colors hover:text-noah-orange sm:px-4 xl:text-base`}
+              } relative z-10 h-10 items-center px-3 font-display text-base font-medium text-noah-ink transition-colors hover:text-noah-orange sm:px-4 xl:text-base`}
             >
               Log in
-            </Link>
+            </a>
             <div
               className={`grid transition-[grid-template-columns,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
                 compact
@@ -161,14 +161,14 @@ export default function Header() {
               }`}
             >
               <div
-                className={`min-w-0 overflow-hidden ${
+                className={`pointer-events-none min-w-0 overflow-hidden ${
                   compact ? "" : "-mx-12 -mt-8 -mb-16 px-12 pb-16 pt-8"
                 }`}
               >
                 <a
                   href="https://hub.noah.support/sign-up"
                   tabIndex={compact ? -1 : 0}
-                  className="glass glass-pill glass-orange flex h-10 items-center whitespace-nowrap px-4 font-display text-base font-medium text-noah-cream sm:h-11 sm:px-5 xl:text-base"
+                  className="glass glass-pill glass-orange pointer-events-auto flex h-10 items-center whitespace-nowrap px-4 font-display text-base font-medium text-noah-cream sm:h-11 sm:px-5 xl:text-base"
                 >
                   Try noah now
                 </a>
