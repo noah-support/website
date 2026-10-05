@@ -42,7 +42,7 @@ export default function BusinessCases() {
           What you get
         </p>
         <h2 className="industry-in mt-4 font-display text-4xl tracking-tight sm:text-5xl">
-          Business cases, ready for implement.
+          Business cases, ready for implemention.
         </h2>
         <p className="industry-in mt-5 font-body text-noah-ink-dim sm:text-lg">
           Finally, every business case is ranked and traced straight back to

@@ -45,7 +45,7 @@ const TESTIMONIALS: Testimonial[] = [
     figure: "€100k+",
     label: "consulting saved",
     quote:
-      "AI opportunities mapped across teams in under a week. Straight into execution. Now in T&C stage.",
+      "AI opportunities mapped across teams in under a week. Straight into execution.",
   },
 ];
 
@@ -109,7 +109,7 @@ export default function Clients({
         const cardMid = rect.left + rect.width / 2;
         const t = Math.max(
           -1.15,
-          Math.min(1.15, (cardMid - mid) / Math.max(rect.width, 1))
+          Math.min(1.15, (cardMid - mid) / Math.max(rect.width, 1)),
         );
         const abs = Math.abs(t);
         if (reducedMotion) {
@@ -240,35 +240,35 @@ export default function Clients({
           testimonials.map((item, index) => ({
             ...item,
             key: `${copy}-${index}`,
-          }))
+          })),
         )
           .flat()
           .map((item, index) => (
-          <div
-            key={item.key}
-            ref={(el) => {
-              cardRefs.current[index] = el;
-            }}
-            className="quote-carousel-card"
-          >
-            <GlassPane className="flex h-full min-h-[16rem] flex-col justify-between gap-6 px-6 py-6 sm:min-h-[18rem] sm:px-8 sm:py-7">
-              <div>
-                <p className="font-display text-4xl tracking-tight sm:text-5xl">
-                  {item.figure}
+            <div
+              key={item.key}
+              ref={(el) => {
+                cardRefs.current[index] = el;
+              }}
+              className="quote-carousel-card"
+            >
+              <GlassPane className="flex h-full min-h-[16rem] flex-col justify-between gap-6 px-6 py-6 sm:min-h-[18rem] sm:px-8 sm:py-7">
+                <div>
+                  <p className="font-display text-4xl tracking-tight sm:text-5xl">
+                    {item.figure}
+                  </p>
+                  <p className="mt-2 font-body text-xs uppercase tracking-[0.18em] text-noah-ink-dim">
+                    {item.label}
+                  </p>
+                  <p className="mt-5 font-body text-base leading-snug sm:text-lg">
+                    {item.quote}
+                  </p>
+                </div>
+                <p className="font-display text-lg tracking-tight sm:text-xl">
+                  {item.company}
                 </p>
-                <p className="mt-2 font-body text-xs uppercase tracking-[0.18em] text-noah-ink-dim">
-                  {item.label}
-                </p>
-                <p className="mt-5 font-body text-base leading-snug sm:text-lg">
-                  {item.quote}
-                </p>
-              </div>
-              <p className="font-display text-lg tracking-tight sm:text-xl">
-                {item.company}
-              </p>
-            </GlassPane>
-          </div>
-        ))}
+              </GlassPane>
+            </div>
+          ))}
       </div>
     </section>
   );

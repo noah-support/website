@@ -42,7 +42,7 @@ export const TEAM: TeamMember[] = [
     name: "César Van Leuffelen",
     role: "Founder & CPO",
     bio: "César has always been drawn to the intersection of technology and real-world impact. While studying Applied Computer Science and later pursuing a Master in Applied IT, he didn't just learn the theory, he built things. From building a first business at 18 to an AI-powered tool for helping pathologists detect skin cancer, he has consistently turned ideas into working software.",
-    image: "/about/cesar.png",
+    image: "/about/cesar.jpeg",
     alt: "Portrait of César Van Leuffelen",
   },
   {
@@ -86,7 +86,7 @@ export const JOIN_BODY =
 
 export const JOIN_CTA = "See open roles";
 
-export const JOIN_IMAGE = "/about/team.webp";
+export const JOIN_IMAGE = "/about/team.JPG";
 
 export const JOIN_IMAGE_ALT =
   "The Noah team talking together in a restaurant";

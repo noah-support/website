@@ -65,11 +65,11 @@ export default function OpeningHero() {
                   Process intelligence, within 24 hours.
                 </p>
                 <h1 className="mt-6 font-display text-4xl leading-[1.05] tracking-tight text-noah-ink sm:text-6xl">
-                  Noah, right hand of every transformation manager.
+                  Noah, the right hand of every transformation manager.
                 </h1>
                 <p className="mt-6 max-w-md font-body text-base text-noah-ink-dim sm:text-lg">
-                  Noah interviews your teams to identify problems, suggests
-                  solutions, and helps you build the fixes.
+                  Noah interviews your teams to identify pain points, suggests
+                  tailored solutions, and guides you towards implementation.
                 </p>
                 <div className="flex space-x-3">
                   <a

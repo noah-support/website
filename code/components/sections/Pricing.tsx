@@ -18,7 +18,7 @@ const PLANS = [
       "Max 20 employee interviews",
     ],
     cta: "Get started now",
-    href: "/register",
+    href: "/book",
     highlighted: false,
   },
   {

@@ -12,14 +12,14 @@ export const KNOWLEDGE_ITEMS: KnowledgeItem[] = [
     slug: "blog",
     name: "Blog",
     href: "/knowledge/blog",
-    poster: "/knowledge/blog.jpg",
-    video: "/knowledge/blog.avif",
+    poster: "/industries/blog.jpg",
+    video: "/industries/blog.avif",
   },
   {
     slug: "documentation",
     name: "Documentation",
-    poster: "/knowledge/prerequisites.jpg",
-    video: "/knowledge/prerequisites.avif",
+    poster: "/industries/documentation.jpg",
+    video: "/industries/documentation.avif",
     comingSoon: true,
   },
 ];
