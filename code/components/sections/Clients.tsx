@@ -34,13 +34,6 @@ const TESTIMONIALS: Testimonial[] = [
       "20 interviews in 1 day. Clear AI roadmap delivered the next day. Now company wide roll-out.",
   },
   {
-    company: "Sweco",
-    figure: "2,500",
-    label: "employees interviewed",
-    quote:
-      "Company-wide AI insights on a continuous basis. Already €500k+ saved on consultants.",
-  },
-  {
     company: "Credendo",
     figure: "€100k+",
     label: "consulting saved",
