@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import CompanyLegal from "@/components/CompanyLegal";
+import { openCookieSettings } from "@/lib/consent";
 import {
   homeSectionHref,
   isSamePageSection,
@@ -110,6 +111,13 @@ export default function Footer() {
             >
               Cookie Policy (EU)
             </Link>
+            <button
+              type="button"
+              onClick={openCookieSettings}
+              className="transition-colors hover:text-noah-ink"
+            >
+              Cookie settings
+            </button>
           </nav>
         </div>
       </div>

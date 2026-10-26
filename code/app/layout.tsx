@@ -3,8 +3,10 @@ import { Fraunces, Merriweather_Sans } from "next/font/google";
 import { SITE_URL } from "@/lib/company";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import CookieBanner from "@/components/legal/CookieBanner";
 import CookieProbe from "@/components/legal/CookieProbe";
 import Tracking from "@/components/Tracking";
+import UtmCapture from "@/components/marketing/UtmCapture";
 import ScrollProgress from "@/components/ScrollProgress";
 import "./globals.css";
 
@@ -49,8 +51,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${fraunces.variable} ${merriweatherSans.variable} h-full`}
     >
       <body className="min-h-full bg-noah-cream text-noah-ink font-body antialiased">
+        <CookieBanner />
         <ScrollProgress />
         <Tracking />
+        <UtmCapture />
         <CookieProbe />
         <Header />
         {children}

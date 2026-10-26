@@ -189,40 +189,55 @@ export const COOKIE_CATALOG: CatalogCookie[] = [
   },
 ];
 
+/** The consent switch a service sits behind. `essential` never needs consent. */
+export type ConsentGroup = "essential" | "analytics" | "marketing" | "media";
+
 export type SiteService = {
   id: string;
   platform: string;
   summary: string;
+  consent: ConsentGroup;
   hosts: string[];
   cookieNames: string[];
+  /** Extra first-party cookie and localStorage prefixes to delete when consent is withdrawn. */
+  storagePrefixes?: string[];
 };
 
-/** Third parties this website actually loads. The scanner marks which of their cookies are present. */
+/**
+ * Third parties this website actually loads. The scanner marks which of their
+ * cookies are present, and the consent module uses `consent`, `cookieNames`
+ * and `storagePrefixes` to clean up after a withdrawal. Changing this list
+ * changes the consent version, so every visitor is asked again.
+ */
 export const SITE_SERVICES: SiteService[] = [
   {
     id: "recaptcha",
     platform: "Google reCAPTCHA",
     summary:
       "Loaded on the contact form, the partner form, and the trade form to block spam.",
+    consent: "essential",
     hosts: ["google.com", "gstatic.com", "recaptcha.net"],
     cookieNames: ["_GRECAPTCHA"],
   },
   {
     id: "google-analytics",
     platform: "Google Analytics",
-    summary: "The Google tag loads on every page and measures how the site is used.",
+    summary: "Measures how the site is used. Loads only after you allow analytics.",
+    consent: "analytics",
     hosts: [
       "googletagmanager.com",
       "google-analytics.com",
       "analytics.google.com",
     ],
     cookieNames: ["_ga", "_ga_", "_gid", "_gat"],
+    storagePrefixes: ["_gcl", "_dc_gtm"],
   },
   {
     id: "hubspot",
     platform: "HubSpot",
     summary:
-      "The HubSpot tracking script loads on every page. The booking page also embeds the meeting calendar.",
+      "Recognises your browser across visits. Loads only after you allow marketing. The booking calendar is HubSpot too, and loads only after you allow external media.",
+    consent: "marketing",
     hosts: [
       "hubspot.com",
       "hsappstatic.net",
@@ -232,19 +247,24 @@ export const SITE_SERVICES: SiteService[] = [
       "hsforms.com",
     ],
     cookieNames: ["__hstc", "hubspotutk", "__hssc", "__hssrc"],
+    storagePrefixes: ["__hs", "hs-", "messagesUtk"],
   },
   {
     id: "snitcher",
     platform: "Snitcher",
-    summary: "Identifies companies that visit the website.",
+    summary:
+      "Identifies companies that visit the website. Loads only after you allow analytics.",
+    consent: "analytics",
     hosts: ["snitcher.com", "cdn.snitcher.com"],
     cookieNames: [],
+    storagePrefixes: ["snitcher_", "_snrs", "__radar"],
   },
   {
     id: "youtube",
     platform: "YouTube",
     summary:
-      "The trade-page demo is an embedded video. It uses the privacy-enhanced player, which does not set cookies until you press play.",
+      "The trade-page demo and videos in blog posts. They load only after you allow external media, using the privacy-enhanced player.",
+    consent: "media",
     hosts: ["youtube.com", "youtube-nocookie.com", "ytimg.com", "googlevideo.com"],
     cookieNames: ["YSC", "VISITOR_INFO1_LIVE", "PREF", "GPS"],
   },

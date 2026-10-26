@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import ConsentHtml from "@/components/legal/ConsentHtml";
 import { getJobBySlug, getJobPosts } from "@/lib/wordpress";
 
 export const revalidate = 120;
@@ -47,10 +48,7 @@ export default async function JobPostPage({
           </h1>
         </div>
 
-        <div
-          className="wp-content mx-auto mt-12 max-w-3xl"
-          dangerouslySetInnerHTML={{ __html: post.content }}
-        />
+        <ConsentHtml className="wp-content mx-auto mt-12 max-w-3xl" html={post.content} />
       </article>
     </main>
   );

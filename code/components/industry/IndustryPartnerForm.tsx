@@ -10,6 +10,7 @@ import {
   validatePartnerPayload,
   type PartnerFieldErrors,
 } from "@/lib/partner";
+import { readUtm } from "@/lib/utm";
 
 type RecaptchaApi = {
   ready: (cb: () => void) => void;
@@ -138,6 +139,7 @@ export default function IndustryPartnerForm({
           ...fields,
           recaptchaToken,
           website,
+          utm: readUtm(),
         }),
       });
       const result = (await response.json()) as {

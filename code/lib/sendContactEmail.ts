@@ -11,6 +11,11 @@ type InboundAttachment = {
   type: string;
 };
 
+// Quotes and angle brackets would break the "Name <email>" address format.
+function displayName(name: string) {
+  return `"${name.replace(/["<>\\]/g, "").trim()}"`;
+}
+
 async function sendInboundEmail({
   log,
   replyToEmail,
@@ -26,7 +31,7 @@ async function sendInboundEmail({
   text: string;
   attachments?: InboundAttachment[];
 }) {
-  const apiKey = process.env.SENDGRID_API_KEY;
+  const apiKey = process.env.RESEND_API_KEY;
   const to = process.env.CONTACT_TO_EMAIL;
 
   if (!apiKey || !to) {
@@ -36,25 +41,24 @@ async function sendInboundEmail({
     return { ok: true as const, delivered: false };
   }
 
-  const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
+  const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      personalizations: [{ to: [{ email: to }] }],
-      from: { email: FORM_FROM_EMAIL, name: FORM_FROM_NAME },
-      reply_to: { email: replyToEmail, name: replyToName },
+      from: `${FORM_FROM_NAME} <${FORM_FROM_EMAIL}>`,
+      to: [to],
+      reply_to: `${displayName(replyToName)} <${replyToEmail}>`,
       subject,
-      content: [{ type: "text/plain", value: text }],
+      text,
       ...(attachments?.length
         ? {
             attachments: attachments.map((file) => ({
               content: file.content,
               filename: file.filename,
-              type: file.type,
-              disposition: "attachment",
+              content_type: file.type,
             })),
           }
         : {}),
@@ -63,7 +67,7 @@ async function sendInboundEmail({
 
   if (!response.ok) {
     const detail = await response.text();
-    console.error(`[${log}] SendGrid failed:`, response.status, detail);
+    console.error(`[${log}] Resend failed:`, response.status, detail);
     return { ok: false as const, delivered: false };
   }
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
+import ConsentGate from "@/components/legal/ConsentGate";
 
 const MEETING_SRC =
   "https://meetings.hubspot.com/denis-leysen/introduction-to-noah?embed=true";
@@ -13,7 +14,7 @@ function isMeetingFrame(iframe: HTMLIFrameElement) {
   return src.includes("meetings.hubspot.com");
 }
 
-export default function BookMeeting() {
+function MeetingEmbed() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [loaded, setLoaded] = useState(false);
 
@@ -92,5 +93,19 @@ export default function BookMeeting() {
         strategy="afterInteractive"
       />
     </div>
+  );
+}
+
+/** The calendar is a HubSpot embed, so it waits for external media consent. */
+export default function BookMeeting() {
+  return (
+    <ConsentGate
+      category="media"
+      description="The booking calendar is hosted by HubSpot."
+      action="Load calendar"
+      className="min-h-[420px] w-full"
+    >
+      <MeetingEmbed />
+    </ConsentGate>
   );
 }

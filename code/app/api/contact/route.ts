@@ -1,9 +1,12 @@
+import { after } from "next/server";
 import {
   parseContactPayload,
+  regardLabel,
   validateContactPayload,
 } from "@/lib/contact";
 import { verifyRecaptchaToken } from "@/lib/recaptcha";
 import { sendContactEmail } from "@/lib/sendContactEmail";
+import { submitForm } from "@/lib/submitForm";
 
 export async function POST(request: Request) {
   let raw: unknown;
@@ -29,6 +32,14 @@ export async function POST(request: Request) {
   if (!captcha.ok) {
     return Response.json({ error: captcha.error }, { status: 400 });
   }
+
+  after(() =>
+    submitForm(
+      "form_contact",
+      { ...payload, regard: regardLabel(payload.regard) },
+      (raw as { utm?: unknown } | null)?.utm
+    )
+  );
 
   const emailed = await sendContactEmail(payload);
   if (!emailed.ok) {

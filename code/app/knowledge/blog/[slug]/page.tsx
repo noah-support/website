@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import ConsentHtml from "@/components/legal/ConsentHtml";
 import { BlogGrid } from "@/components/knowledge/BlogCard";
 import { formatPostDate } from "@/lib/blog";
 import {
@@ -85,10 +86,7 @@ export default async function BlogPostPage({
           </div>
         )}
 
-        <div
-          className="wp-content mx-auto mt-12 max-w-3xl"
-          dangerouslySetInnerHTML={{ __html: post.content }}
-        />
+        <ConsentHtml className="wp-content mx-auto mt-12 max-w-3xl" html={post.content} />
       </article>
 
       {related.length > 0 && (

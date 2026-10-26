@@ -9,9 +9,10 @@
 #   WORDPRESS_URL
 #
 # Inject these at runtime only. Do not pass them as build arguments:
-#   SENDGRID_API_KEY
+#   RESEND_API_KEY
 #   CONTACT_TO_EMAIL
 #   RECAPTCHA_SECRET_KEY
+#   N8N_FORM_WEBHOOK_URL (required: the server will not start without it)
 # WORDPRESS_URL is also read at runtime for blog and job pages.
 
 ARG NODE_VERSION=24-bookworm-slim

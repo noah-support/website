@@ -1787,3 +1787,238 @@ body {
 .wp-content section {
   scroll-margin-top: 7rem;
 }
+
+/* ---------------------------------- */
+/* Cookie consent                     */
+/* ---------------------------------- */
+
+/* Room under the footer while the banner is up, so nothing hides behind it. */
+body {
+  padding-bottom: var(--consent-banner-space, 0px);
+}
+
+/* One glass surface, bottom of the screen. Tinted close to solid: it can
+   land on the navy hero, and the copy must clear AA over that too. */
+.consent-banner {
+  position: fixed;
+  z-index: 70;
+  left: 1rem;
+  right: 1rem;
+  bottom: 1rem;
+  margin-inline: auto;
+  max-width: 56rem;
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(180deg, rgba(246, 243, 236, 0.94), rgba(246, 243, 236, 0.88));
+  animation: consent-rise var(--glass-duration) var(--glass-ease) both;
+}
+
+@media (min-width: 640px) {
+  .consent-banner {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 1rem 1rem 1rem 1.75rem;
+    border-radius: 999px;
+  }
+  .consent-banner > p {
+    flex: 1;
+  }
+}
+
+/* Accept all and Reject all share this exact style: same size, same weight. */
+.consent-button {
+  display: inline-flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0 1.25rem;
+  border-radius: 999px;
+  background: var(--noah-ink);
+  color: var(--noah-cream);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  transition: transform 160ms var(--glass-ease), background-color 160ms var(--glass-ease);
+}
+
+.consent-button:hover {
+  background: var(--noah-indigo);
+}
+
+.consent-button:active {
+  transform: scale(0.97);
+}
+
+.consent-text-button {
+  min-height: 2.75rem;
+  padding: 0 0.75rem;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--noah-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--noah-ink-hairline);
+  text-underline-offset: 3px;
+}
+
+.consent-link {
+  color: var(--noah-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--noah-ink-faint);
+  text-underline-offset: 3px;
+  white-space: nowrap;
+}
+
+.consent-text-button:hover,
+.consent-link:hover {
+  text-decoration-color: currentColor;
+}
+
+/* Solid, high-contrast rings. Translucent ones vanish on glass. */
+.consent-button:focus-visible,
+.consent-text-button:focus-visible,
+.consent-link:focus-visible,
+.consent-switch:focus-visible,
+.consent-dialog :is(a, button, input):focus-visible {
+  outline: 2px solid var(--noah-ink);
+  outline-offset: 3px;
+}
+
+/* Settings: solid panel, not glass. It carries body copy. */
+.consent-dialog {
+  width: min(100% - 2rem, 34rem);
+  max-height: min(100dvh - 2rem, 46rem);
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--noah-ink-hairline);
+  border-radius: var(--glass-radius);
+  background: var(--noah-cream);
+  color: var(--noah-ink);
+  box-shadow: 0 30px 80px rgba(20, 23, 42, 0.28);
+  overflow: hidden;
+}
+
+.consent-dialog[open] {
+  animation: consent-rise var(--glass-duration) var(--glass-ease) both;
+}
+
+.consent-dialog::backdrop {
+  background: rgba(10, 15, 31, 0.45);
+}
+
+@media (max-width: 639px) {
+  .consent-dialog {
+    width: 100%;
+    max-width: none;
+    margin: auto 0 0;
+    border-radius: var(--glass-radius) var(--glass-radius) 0 0;
+  }
+}
+
+.consent-switch {
+  appearance: none;
+  position: relative;
+  flex-shrink: 0;
+  width: 2.75rem;
+  height: 1.625rem;
+  border-radius: 999px;
+  /* Dark enough for 3:1 against the cream panel in the off state. */
+  background: rgba(20, 23, 42, 0.5);
+  cursor: pointer;
+  transition: background-color 200ms var(--glass-ease);
+}
+
+.consent-switch::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(20, 23, 42, 0.3);
+  transition: transform 200ms var(--glass-ease);
+}
+
+.consent-switch:checked {
+  background: var(--noah-ink);
+}
+
+.consent-switch:checked::after {
+  transform: translateX(1.125rem);
+}
+
+.consent-switch:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Stands in for an embed until its category is allowed. */
+.consent-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  text-align: center;
+  background: var(--noah-cream-soft);
+  border: 1px solid var(--noah-ink-hairline);
+}
+
+.wp-content .consent-placeholder {
+  border-radius: 18px;
+}
+
+.wp-content .consent-placeholder p {
+  margin: 0;
+}
+
+.wp-content iframe[data-consent-src] {
+  display: none;
+}
+
+@keyframes consent-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .consent-banner,
+  .consent-dialog[open] {
+    animation: none;
+  }
+  .consent-button,
+  .consent-switch,
+  .consent-switch::after {
+    transition: none;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .consent-banner {
+    background: var(--noah-cream);
+  }
+}
+
+@media (forced-colors: active) {
+  .consent-button {
+    border: 1px solid ButtonText;
+  }
+  .consent-switch {
+    border: 1px solid CanvasText;
+  }
+  .consent-switch:checked {
+    background: Highlight;
+  }
+}

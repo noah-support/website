@@ -1,6 +1,7 @@
 "use client";
 
 import GlassPane from "@/components/GlassPane";
+import ConsentGate from "@/components/legal/ConsentGate";
 import { TRADE_DEMO } from "@/lib/trade";
 import { useInView } from "@/lib/useInView";
 import { useReducedMotion } from "@/lib/useReducedMotion";
@@ -25,16 +26,23 @@ export default function TradeDemo() {
           {TRADE_DEMO.title}
         </h2>
         <GlassPane className="industry-in mt-8 overflow-hidden p-2 sm:p-3">
-          <div className="relative aspect-video w-full overflow-hidden rounded-[18px]">
-            <iframe
-              src={EMBED_SRC}
-              title={TRADE_DEMO.title}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-              referrerPolicy="strict-origin-when-cross-origin"
-              className="absolute inset-0 h-full w-full"
-            />
-          </div>
+          <ConsentGate
+            category="media"
+            description="This demo is hosted on YouTube."
+            action="Load video"
+            className="aspect-video w-full rounded-[18px]"
+          >
+            <div className="relative aspect-video w-full overflow-hidden rounded-[18px]">
+              <iframe
+                src={EMBED_SRC}
+                title={TRADE_DEMO.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                referrerPolicy="strict-origin-when-cross-origin"
+                className="absolute inset-0 h-full w-full"
+              />
+            </div>
+          </ConsentGate>
         </GlassPane>
       </div>
     </section>

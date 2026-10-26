@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import CookieDeclaration from "@/components/legal/CookieDeclaration";
+import CookieSettingsButton from "@/components/legal/CookieSettingsButton";
 
 export const metadata: Metadata = {
   title: "Cookie Policy (EU) — Noah",
@@ -17,7 +18,7 @@ export default function CookiesPage() {
         Cookie policy
       </h1>
       <p className="mt-5 max-w-xl font-body text-sm leading-relaxed text-noah-ink-dim">
-        Last updated on 17 April 2026. This policy applies to citizens and
+        Last updated on 26 October 2026. This policy applies to citizens and
         legal permanent residents of the European Economic Area and
         Switzerland.
       </p>
@@ -77,9 +78,10 @@ export default function CookiesPage() {
           <h3>5.2 Statistics cookies</h3>
           <p>
             Statistics cookies help us understand how the website is used, so
-            we can improve it. Google Analytics does this through the Google
-            tag on every page. Those cookies show up in the scan below when
-            they are present in your browser.
+            we can improve it. We use Google Analytics for this, and Snitcher
+            to recognise which companies visit. Both load only after you allow
+            analytics. Their cookies show up in the scan below when they are
+            present in your browser.
           </p>
           <h3>5.3 Marketing and tracking cookies</h3>
           <p>
@@ -90,12 +92,14 @@ export default function CookiesPage() {
           </p>
           <h3>5.4 Embedded services</h3>
           <p>
-            Some pages load a service from another company: Google Analytics
-            and HubSpot tracking on every page, Google reCAPTCHA on our forms,
-            a HubSpot calendar on the booking page, Snitcher to recognise
-            visiting companies, and a YouTube video on the trade page. Those
-            services can store and
-            process information under their own policies. The list in the next
+            Some pages load a service from another company. Google reCAPTCHA
+            protects our forms against spam and is always on. Google
+            Analytics and Snitcher load only after you allow analytics.
+            HubSpot tracking loads only after you allow marketing. The HubSpot
+            calendar on the booking page, the YouTube video on the trade page
+            and videos in blog posts load only after you allow external
+            media. Those services can store and process information under
+            their own policies. The list in the next
             section is built from the services this website loads, and from
             the cookies actually present in your browser. Read the privacy
             statement of each provider, linked from that list, to see what
@@ -125,21 +129,53 @@ export default function CookiesPage() {
         <section id="consent">
           <h2>7. Consent</h2>
           <p>
-            Functional cookies that the website needs in order to work can be
-            placed without a separate choice. Statistics and marketing cookies
-            are placed by the embedded services above, and only on the pages
-            that load them. You can refuse those cookies by blocking
-            third-party cookies in your browser, or by not using the booking
-            calendar and the embedded video.
+            On your first visit, a banner asks what you allow. Until you
+            choose, only essential cookies are used. Nothing from the
+            analytics, marketing or external media categories loads before
+            you allow it, and no category is switched on in advance.
+          </p>
+          <ul>
+            <li>
+              Essential: keeps the website and its forms working. This covers
+              Google reCAPTCHA spam protection and the record of your choice.
+              It is always on and needs no consent.
+            </li>
+            <li>Analytics: Google Analytics and Snitcher. Off until you allow it.</li>
+            <li>Marketing: HubSpot tracking. Off until you allow it.</li>
+            <li>
+              External media: YouTube videos and the HubSpot booking calendar.
+              Off until you allow it. Until then, a placeholder shows where
+              the embed would be.
+            </li>
+          </ul>
+          <p>
+            You can accept everything, reject everything, or choose per
+            category. Rejecting is as easy as accepting, and the website works
+            either way.
           </p>
           <p>
-            You can also delete cookies that are already stored. The scan in
-            section 6 marks which of the listed cookies are in this browser
-            right now. Scan again after you delete them and the status
-            updates.
+            Your choice is stored in this browser, with the date and the
+            version of the service list it applies to. We do not store it on
+            our servers. We ask again after 12 months, or sooner when the list
+            of services in section 6 changes.
+          </p>
+          <p>
+            You can change or withdraw your choice at any time, here or with
+            the Cookie settings link in the footer of every page. When you
+            withdraw a category, we delete the cookies of that category that
+            this website can reach and reload the page, so its scripts stop
+            running. Cookies a provider stored on its own domain, such as
+            youtube.com or hubspot.com, can only be removed in your browser
+            settings, as described in section 8.
           </p>
         </section>
+      </article>
 
+      <div className="mt-6">
+        <CookieSettingsButton />
+      </div>
+
+      <article className="wp-content mt-14">
         <section id="browser">
           <h2>8. Enabling, disabling and deleting cookies</h2>
           <p>
