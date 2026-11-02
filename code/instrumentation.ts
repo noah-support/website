@@ -1,6 +1,8 @@
-import { formWebhookUrl } from "@/lib/submitForm";
+import { capturesDisabled, formWebhookUrl } from "@/lib/submitForm";
 
-export function register() {
+export async function register() {
   if (process.env.NEXT_RUNTIME !== "nodejs") return;
-  formWebhookUrl();
+  if (!capturesDisabled()) formWebhookUrl();
+  const { ensureBucket } = await import("@/lib/storage");
+  await ensureBucket();
 }

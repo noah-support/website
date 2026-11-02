@@ -36,6 +36,10 @@ function wordpressImagePatterns(): ImagePattern[] {
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  serverExternalPackages: ["@prisma/client"],
+  outputFileTracingIncludes: {
+    "/*": ["./node_modules/.prisma/client/**/*", "./node_modules/@prisma/client/**/*"],
+  },
   allowedDevOrigins: ["192.168.20.80"],
   images: {
     formats: ["image/avif", "image/webp"],

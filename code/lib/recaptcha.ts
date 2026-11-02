@@ -5,7 +5,14 @@ type RecaptchaVerifyResponse = {
   "error-codes"?: string[];
 };
 
+// Same testing switch as the n8n capture. False unless DISABLE_CAPTURES is "true".
+export function captchaDisabled() {
+  return process.env.DISABLE_CAPTURES?.trim().toLowerCase() === "true";
+}
+
 export async function verifyRecaptchaToken(token: string, expectedAction: string) {
+  if (captchaDisabled()) return { ok: true as const, score: 1 };
+
   const secret = process.env.RECAPTCHA_SECRET_KEY;
 
   if (!secret) {

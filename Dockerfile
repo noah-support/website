@@ -12,7 +12,13 @@
 #   RESEND_API_KEY
 #   CONTACT_TO_EMAIL
 #   RECAPTCHA_SECRET_KEY
-#   N8N_FORM_WEBHOOK_URL (required: the server will not start without it)
+#   N8N_FORM_WEBHOOK_URL (required unless DISABLE_CAPTURES=true)
+#   DISABLE_CAPTURES (optional, default false; true skips the n8n lead capture and reCAPTCHA)
+#   DATABASE_URL (Postgres; migrations run on start when this is set)
+#   S3_ENDPOINT, S3_ACCESS_KEY, S3_SECRET_KEY, S3_BUCKET
+#   ADMIN_PASSWORD, ADMIN_SESSION_SECRET
+#   AI_API_KEY (optional OpenRouter key; defaults to Claude Sonnet 5.5)
+#   AI_BASE_URL (optional), AI_MODEL (optional)
 # WORDPRESS_URL is also read at runtime for blog and job pages.
 
 ARG NODE_VERSION=24-bookworm-slim
@@ -39,7 +45,14 @@ ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL \
     NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1
 
+# prisma generate reads DATABASE_URL from the schema. It does not connect.
+RUN DATABASE_URL="postgresql://build:build@127.0.0.1:5432/build" npx prisma generate
 RUN npm run build
+
+FROM node:${NODE_VERSION} AS migrator
+WORKDIR /opt/prisma
+RUN npm init -y >/dev/null \
+    && npm install prisma@6.19.3 --no-audit --no-fund
 
 FROM node:${NODE_VERSION} AS runner
 WORKDIR /app
@@ -53,10 +66,17 @@ ENV NODE_ENV=production \
 COPY --from=builder --chown=node:node /app/public ./public
 COPY --from=builder --chown=node:node /app/.next/standalone ./
 COPY --from=builder --chown=node:node /app/.next/static ./.next/static
+COPY --from=builder --chown=node:node /app/prisma ./prisma
+COPY --from=builder --chown=node:node /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder --chown=node:node /app/node_modules/@prisma ./node_modules/@prisma
+COPY --from=migrator --chown=node:node /opt/prisma /opt/prisma
+COPY --chown=node:node code/docker-entrypoint.sh /entrypoint.sh
+RUN chmod 755 /entrypoint.sh
 
 USER node
 EXPOSE 3000
 
 # Force the bind address. Container platforms set HOSTNAME to the pod name,
 # and the Next.js standalone server would otherwise listen only on that name.
-CMD ["sh", "-c", "HOSTNAME=0.0.0.0 exec node server.js"]
+# Migrations run only when DATABASE_URL is present.
+ENTRYPOINT ["/entrypoint.sh"]

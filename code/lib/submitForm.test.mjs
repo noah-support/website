@@ -1,7 +1,7 @@
 // Run with: npm test (Node 24 strips the TypeScript types on import).
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { buildPayload, mapFields, submitForm } from "./submitForm.ts";
+import { buildLandingPayload, buildPayload, landingFormName, mapFields, mapLandingAnswers, submitForm, submitLandingForm } from "./submitForm.ts";
 
 const SCHEMA_KEYS = [
   "name",
@@ -77,6 +77,7 @@ test("unknown form names throw", async () => {
 });
 
 test("webhook failure does not throw", async () => {
+  process.env.DISABLE_CAPTURES = "false";
   process.env.N8N_FORM_WEBHOOK_URL = "http://127.0.0.1:9/unreachable";
   const original = console.error;
   console.error = () => {};
@@ -85,4 +86,51 @@ test("webhook failure does not throw", async () => {
   } finally {
     console.error = original;
   }
+});
+
+test("DISABLE_CAPTURES skips the webhook", async () => {
+  process.env.DISABLE_CAPTURES = "true";
+  delete process.env.N8N_FORM_WEBHOOK_URL;
+  let called = false;
+  const original = globalThis.fetch;
+  globalThis.fetch = async () => {
+    called = true;
+    return new Response();
+  };
+  const originalInfo = console.info;
+  console.info = () => {};
+  try {
+    await submitForm("form_contact", { name: "Jane" });
+    await submitLandingForm("spring", [{ label: "Email", value: "a@b.co" }]);
+  } finally {
+    globalThis.fetch = original;
+    console.info = originalInfo;
+    delete process.env.DISABLE_CAPTURES;
+  }
+  assert.equal(called, false);
+});
+
+test("landing answers map known labels and keep the rest", () => {
+  const fields = mapLandingAnswers([
+    { label: "Full name", value: "Jane Doe" },
+    { label: "Work email", value: "jane@acme.com" },
+    { label: "Company", value: "Acme" },
+    { label: "Team size", value: "40" },
+  ]);
+  assert.equal(fields.name, "Jane Doe");
+  assert.equal(fields.email, "jane@acme.com");
+  assert.equal(fields.company_name, "Acme");
+  assert.equal(fields.other, "Team size: 40");
+  assert.equal(landingFormName("Spring Offer!"), "landing_spring_offer");
+});
+
+test("landing payload uses the flow slug as the form name", () => {
+  const payload = buildLandingPayload("spring-offer", [{ label: "Email", value: "a@b.co" }], {
+    utm_source: "ad",
+  });
+  assert.equal(payload.form_name, "landing_spring_offer");
+  assert.equal(payload.latest_marketing_action, "landing_spring_offer");
+  assert.equal(payload.fields.email, "a@b.co");
+  assert.equal(buildLandingPayload("spring-offer", [], {}, "Web Summit 2026").form_name, "Web Summit 2026");
+  assert.deepEqual(payload.utm, { utm_source: "ad" });
 });
