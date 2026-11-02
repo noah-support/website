@@ -71,7 +71,10 @@ COPY --from=builder --chown=node:node /app/node_modules/.prisma ./node_modules/.
 COPY --from=builder --chown=node:node /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=migrator --chown=node:node /opt/prisma /opt/prisma
 COPY --chown=node:node code/docker-entrypoint.sh /entrypoint.sh
-RUN chmod 755 /entrypoint.sh
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends openssl \
+    && rm -rf /var/lib/apt/lists/* \
+    && chmod 755 /entrypoint.sh
 
 USER node
 EXPOSE 3000
