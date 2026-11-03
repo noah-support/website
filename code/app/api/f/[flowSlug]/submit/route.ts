@@ -58,7 +58,9 @@ export async function POST(
       answers: checked.answers as unknown as Prisma.InputJsonValue,
     },
   });
-  after(() => submitLandingForm(flow.slug, checked.answers, raw.utm, form.formName));
+  if (!form.skipWebhook) {
+    after(() => submitLandingForm(flow.slug, checked.answers, raw.utm, form.formName));
+  }
   await grantFlowAccess(flow.slug);
 
   return Response.json({ ok: true, next: `/f/${flow.slug}/${target.slug}` });

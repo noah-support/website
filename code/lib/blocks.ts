@@ -43,7 +43,15 @@ export type PdfBlock = { id: string; type: "pdf"; assetId: string };
 export type SpacerBlock = { id: string; type: "spacer"; height: number };
 export const SPACER_MIN = 8;
 export const SPACER_MAX = 600;
-export type FormBlock = { id: string; type: "form"; steps: FormStep[]; targetPageId: string; formName: string };
+// skipWebhook: answers are stored, but never sent to n8n.
+export type FormBlock = {
+  id: string;
+  type: "form";
+  steps: FormStep[];
+  targetPageId: string;
+  formName: string;
+  skipWebhook: boolean;
+};
 export const SECTION_TEMPLATES = ["hero", "feature", "video", "compare", "process", "faq", "pricing", "proof", "cta"] as const;
 export type SectionTemplate = (typeof SECTION_TEMPLATES)[number];
 export type SectionItem = { id: string; title: string; body: string };
@@ -150,6 +158,7 @@ export function starterBlocks(): Block[] {
       type: "form",
       formName: "",
       targetPageId: "",
+      skipWebhook: false,
       steps: [
         {
           id: newId(),
@@ -336,6 +345,7 @@ export function createBlock(type: Block["type"]): Block | null {
         type,
         formName: "",
         targetPageId: "",
+        skipWebhook: false,
         steps: [{ id: newId(), title: "Your details", fields: [nameField(), field("email", "Email")] }],
       };
     default:
@@ -382,7 +392,7 @@ export function formBlock(blocks: Block[]) {
 export function pageWarnings(blocks: Block[]) {
   const warnings: string[] = [];
   const form = formBlock(blocks);
-  if (form && !form.formName.trim()) {
+  if (form && !form.skipWebhook && !form.formName.trim()) {
     warnings.push("Add the HubSpot form name. The webhook sends that exact name, and HubSpot must use the same one.");
   }
   if (form && !form.targetPageId) {
@@ -511,6 +521,7 @@ export function parseBlocks(input: unknown): { ok: true; blocks: Block[] } | { o
       type: "form",
       formName: cleanText(raw.formName, 120),
       targetPageId: cleanText(raw.targetPageId, 80),
+      skipWebhook: raw.skipWebhook === true,
       steps: parsed.steps,
     });
   }

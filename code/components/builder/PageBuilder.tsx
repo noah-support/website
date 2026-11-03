@@ -757,6 +757,20 @@ function FormInspector({
       <p className="font-body text-xs leading-relaxed text-noah-ink-dim">
         Every submission is sent to the webhook with this name. HubSpot accepts it only when the names match.
       </p>
+      <label className="flex items-start gap-2 text-sm">
+        <input
+          type="checkbox"
+          className="mt-1"
+          checked={block.skipWebhook}
+          onChange={(event) => onChange({ ...block, skipWebhook: event.target.checked })}
+        />
+        <span>
+          Do not send to the webhook
+          <span className="mt-1 block font-body text-xs leading-relaxed text-noah-ink-dim">
+            Answers are still saved under Submissions, but nothing reaches n8n or HubSpot.
+          </span>
+        </span>
+      </label>
       <PageSelect
         label="After submit, open"
         value={block.targetPageId}

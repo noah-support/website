@@ -28,7 +28,18 @@ export default async function SubmissionsPage({
     <main className="mx-auto flex max-w-6xl flex-col gap-8 px-5 py-10">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <h1 className="font-display text-4xl text-noah-ink">Submissions</h1>
-        {flows && flows.length > 0 ? <FlowSelect flows={flows.map((item) => ({ id: item.id, name: item.name }))} value={flow ?? ""} /> : null}
+        <div className="flex w-full max-w-md flex-wrap items-end justify-end gap-3">
+          {flows && flows.length > 0 ? <FlowSelect flows={flows.map((item) => ({ id: item.id, name: item.name }))} value={flow ?? ""} /> : null}
+          {submissions && submissions.length > 0 ? (
+            <a
+              href={flow ? `/api/admin/submissions/export?flow=${encodeURIComponent(flow)}` : "/api/admin/submissions/export"}
+              download
+              className="inline-flex h-12 shrink-0 items-center rounded-full border border-noah-ink px-5 text-sm text-noah-ink hover:bg-noah-ink hover:text-noah-cream"
+            >
+              Export CSV
+            </a>
+          ) : null}
+        </div>
       </div>
       {submissions === null ? (
         <p className="font-body text-sm">Set DATABASE_URL to store submissions.</p>

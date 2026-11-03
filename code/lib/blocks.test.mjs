@@ -145,3 +145,13 @@ test("a spacer keeps a height between 8 and 600", () => {
   assert.equal(spacerHeight("abc"), 64);
   assert.equal(spacerHeight(2), 8);
 });
+
+test("a form sends to the webhook unless told not to", () => {
+  const form = createBlock("form");
+  assert.equal(form.skipWebhook, false);
+  const parsed = parseBlocks([{ ...form, skipWebhook: true }]);
+  assert.equal(parsed.ok, true);
+  if (parsed.ok) assert.equal(parsed.blocks[0].skipWebhook, true);
+  const warnings = pageWarnings([{ ...form, formName: "", targetPageId: "x", skipWebhook: true }]);
+  assert.equal(warnings.some((warning) => warning.includes("HubSpot")), false);
+});
