@@ -995,6 +995,7 @@ function FileField({
 }) {
   const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState("");
 
   return (
     <label className="flex flex-col gap-2 text-sm">
@@ -1010,20 +1011,77 @@ function FileField({
           if (!file) return;
           setUploading(true);
           setError("");
-          const body = new FormData();
-          body.set("file", file);
-          const response = await fetch("/api/admin/assets", { method: "POST", body });
-          const payload = (await response.json()) as { id?: string; error?: string };
-          setUploading(false);
-          if (!response.ok || !payload.id) {
-            setError(payload.error || "Upload failed.");
-            return;
+          setProgress("");
+          try {
+            const id = file.type.startsWith("video/")
+              ? await uploadInParts(file, setProgress)
+              : await uploadWhole(file);
+            onUploaded(id);
+          } catch (uploadError) {
+            setError(uploadError instanceof Error ? uploadError.message : "Upload failed.");
+          } finally {
+            setUploading(false);
+            setProgress("");
           }
-          onUploaded(payload.id);
         }}
       />
-      {uploading ? <span className="text-xs text-noah-ink-dim">Uploading</span> : null}
+      {uploading ? <span className="text-xs text-noah-ink-dim">Uploading{progress ? ` ${progress}` : ""}</span> : null}
       {error ? <span className="text-xs text-noah-orange">{error}</span> : null}
     </label>
   );
+}
+
+async function uploadWhole(file: File) {
+  const body = new FormData();
+  body.set("file", file);
+  const response = await fetch("/api/admin/assets", { method: "POST", body });
+  const payload = (await response.json()) as { id?: string; error?: string };
+  if (!response.ok || !payload.id) throw new Error(payload.error || "Upload failed.");
+  return payload.id;
+}
+
+// Videos go up in parts so no single request is larger than the storage accepts.
+async function uploadInParts(file: File, onProgress: (text: string) => void) {
+  const started = await fetch("/api/admin/assets/uploads", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ filename: file.name, mime: file.type, size: file.size }),
+  });
+  const start = (await started.json()) as { id?: string; partSize?: number; error?: string };
+  if (!started.ok || !start.id || !start.partSize) throw new Error(start.error || "Upload failed.");
+  const { id, partSize } = start;
+  const total = Math.ceil(file.size / partSize);
+  const parts: { partNumber: number; etag: string }[] = [];
+
+  try {
+    for (let index = 0; index < total; index += 1) {
+      const partNumber = index + 1;
+      onProgress(`${Math.round((index / total) * 100)}%`);
+      const chunk = file.slice(index * partSize, Math.min(file.size, partNumber * partSize));
+      let etag = "";
+      for (let attempt = 0; attempt < 3 && !etag; attempt += 1) {
+        const response = await fetch(`/api/admin/assets/uploads/${id}?part=${partNumber}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/octet-stream" },
+          body: chunk,
+        });
+        const payload = (await response.json().catch(() => ({}))) as { etag?: string; error?: string };
+        if (response.ok && payload.etag) etag = payload.etag;
+        else if (attempt === 2 || response.status < 500) throw new Error(payload.error || "Upload failed.");
+      }
+      parts.push({ partNumber, etag });
+    }
+    onProgress("100%");
+    const finished = await fetch(`/api/admin/assets/uploads/${id}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ parts }),
+    });
+    const done = (await finished.json()) as { id?: string; error?: string };
+    if (!finished.ok || !done.id) throw new Error(done.error || "Upload failed.");
+    return done.id;
+  } catch (error) {
+    await fetch(`/api/admin/assets/uploads/${id}`, { method: "DELETE" }).catch(() => undefined);
+    throw error;
+  }
 }

@@ -58,10 +58,14 @@ FROM node:${NODE_VERSION} AS runner
 WORKDIR /app
 
 ARG WORDPRESS_URL
+# jemalloc: sharp (Next image optimization) fragments glibc malloc, so resident
+# memory only grows. sharp recommends jemalloc on glibc Linux.
+# max-old-space-size: V8 collects garbage before growing the heap toward the container limit.
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
     PORT=3000 \
-    WORDPRESS_URL=$WORDPRESS_URL
+    WORDPRESS_URL=$WORDPRESS_URL \
+    NODE_OPTIONS=--max-old-space-size=384
 
 COPY --from=builder --chown=node:node /app/public ./public
 COPY --from=builder --chown=node:node /app/.next/standalone ./
@@ -72,9 +76,13 @@ COPY --from=builder --chown=node:node /app/node_modules/@prisma ./node_modules/@
 COPY --from=migrator --chown=node:node /opt/prisma /opt/prisma
 COPY --chown=node:node code/docker-entrypoint.sh /entrypoint.sh
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends openssl \
+    && apt-get install -y --no-install-recommends openssl libjemalloc2 \
+    && ln -s "$(find /usr/lib -name libjemalloc.so.2 | head -n 1)" /usr/lib/libjemalloc.so.2 \
     && rm -rf /var/lib/apt/lists/* \
     && chmod 755 /entrypoint.sh
+
+# Set after the install so apt does not try to preload a library that is not there yet.
+ENV LD_PRELOAD=/usr/lib/libjemalloc.so.2
 
 USER node
 EXPOSE 3000

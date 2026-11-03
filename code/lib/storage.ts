@@ -1,13 +1,19 @@
-import { Readable } from "node:stream";
-import type { ReadableStream as WebReadableStream } from "node:stream/web";
 import {
+  AbortMultipartUploadCommand,
+  CompleteMultipartUploadCommand,
   CreateBucketCommand,
+  CreateMultipartUploadCommand,
+  DeleteObjectCommand,
   GetObjectCommand,
   HeadBucketCommand,
   HeadObjectCommand,
   PutObjectCommand,
   S3Client,
+  UploadPartCommand,
 } from "@aws-sdk/client-s3";
+
+// Each video part is sent as its own request. The storage server refuses chunks over 16 MiB.
+export const UPLOAD_PART_BYTES = 8 * 1024 * 1024;
 
 export function storageSettings() {
   const endpoint = process.env.S3_ENDPOINT?.trim();
@@ -37,6 +43,10 @@ function client() {
         secretAccessKey: settings.secretAccessKey,
       },
       forcePathStyle: true,
+      // Checksums only when the storage requires them. Otherwise the SDK sends
+      // aws-chunked bodies, which S3-compatible servers often reject.
+      requestChecksumCalculation: "WHEN_REQUIRED",
+      responseChecksumValidation: "WHEN_REQUIRED",
     });
   }
   return { s3: globalForS3.s3, bucket: settings.bucket };
@@ -56,19 +66,64 @@ export async function ensureBucket() {
   }
 }
 
-// Streams the upload to storage instead of copying it into one more buffer.
-export async function putAsset(key: string, file: File) {
+export async function putAsset(key: string, body: Buffer, mime: string) {
   const storage = client();
   if (!storage) throw new Error("File storage is not configured.");
   await storage.s3.send(
-    new PutObjectCommand({
+    new PutObjectCommand({ Bucket: storage.bucket, Key: key, Body: body, ContentLength: body.length, ContentType: mime })
+  );
+}
+
+export async function startMultipart(key: string, mime: string) {
+  const storage = client();
+  if (!storage) throw new Error("File storage is not configured.");
+  const result = await storage.s3.send(
+    new CreateMultipartUploadCommand({ Bucket: storage.bucket, Key: key, ContentType: mime })
+  );
+  if (!result.UploadId) throw new Error("Storage did not start the upload.");
+  return result.UploadId;
+}
+
+export async function uploadPart(key: string, uploadId: string, partNumber: number, body: Buffer) {
+  const storage = client();
+  if (!storage) throw new Error("File storage is not configured.");
+  const result = await storage.s3.send(
+    new UploadPartCommand({
       Bucket: storage.bucket,
       Key: key,
-      Body: Readable.fromWeb(file.stream() as unknown as WebReadableStream),
-      ContentLength: file.size,
-      ContentType: file.type,
+      UploadId: uploadId,
+      PartNumber: partNumber,
+      Body: body,
+      ContentLength: body.length,
     })
   );
+  if (!result.ETag) throw new Error("Storage did not accept the part.");
+  return result.ETag;
+}
+
+export async function completeMultipart(key: string, uploadId: string, parts: { partNumber: number; etag: string }[]) {
+  const storage = client();
+  if (!storage) throw new Error("File storage is not configured.");
+  await storage.s3.send(
+    new CompleteMultipartUploadCommand({
+      Bucket: storage.bucket,
+      Key: key,
+      UploadId: uploadId,
+      MultipartUpload: { Parts: parts.map((part) => ({ PartNumber: part.partNumber, ETag: part.etag })) },
+    })
+  );
+}
+
+export async function abortMultipart(key: string, uploadId: string) {
+  const storage = client();
+  if (!storage) return;
+  await storage.s3.send(new AbortMultipartUploadCommand({ Bucket: storage.bucket, Key: key, UploadId: uploadId }));
+}
+
+export async function deleteObject(key: string) {
+  const storage = client();
+  if (!storage) return;
+  await storage.s3.send(new DeleteObjectCommand({ Bucket: storage.bucket, Key: key }));
 }
 
 export async function assetSize(key: string) {

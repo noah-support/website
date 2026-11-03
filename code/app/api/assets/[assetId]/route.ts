@@ -32,7 +32,7 @@ export async function GET(
   const prisma = getPrisma();
   if (!prisma) return new Response("Not found", { status: 404 });
   const asset = await prisma.asset.findUnique({ where: { id: assetId } });
-  if (!asset || asset.key === "pending") return new Response("Not found", { status: 404 });
+  if (!asset || asset.key.startsWith("pending")) return new Response("Not found", { status: 404 });
   if (!(await assetIsPublic(assetId))) return new Response("Not found", { status: 404 });
 
   try {

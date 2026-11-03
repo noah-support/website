@@ -43,6 +43,8 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ["192.168.20.80"],
   images: {
     formats: ["image/avif", "image/webp"],
+    // The default is half the free disk. Written cache files count as container memory on most hosts.
+    maximumDiskCacheSize: 100_000_000,
     remotePatterns: wordpressImagePatterns(),
   },
   async redirects() {
