@@ -90,6 +90,46 @@ export async function createFlow(name: string) {
   });
 }
 
+// Copies every page as a draft. Buttons and forms point at the copied pages.
+export async function duplicateFlow(id: string) {
+  const prisma = getPrisma();
+  if (!prisma) return null;
+  const source = await prisma.flow.findUnique({
+    where: { id },
+    include: { pages: { orderBy: { position: "asc" } } },
+  });
+  if (!source) return null;
+  const name = `${source.name} (copy)`.slice(0, 80);
+  const slug = await uniqueSlug(name);
+  return prisma.$transaction(async (tx) => {
+    const flow = await tx.flow.create({ data: { name, slug, published: false } });
+    const idMap = new Map<string, string>();
+    const copies: { id: string; blocks: Block[] }[] = [];
+    for (const page of source.pages) {
+      const copy = await tx.page.create({
+        data: {
+          flowId: flow.id,
+          slug: randomPageSlug(),
+          title: page.title,
+          position: page.position,
+          blocks: jsonBlocks([]),
+        },
+      });
+      idMap.set(page.id, copy.id);
+      copies.push({ id: copy.id, blocks: readBlocks(page.blocks) });
+    }
+    for (const copy of copies) {
+      const blocks = copy.blocks.map((block) =>
+        (block.type === "button" || block.type === "form") && block.targetPageId
+          ? { ...block, targetPageId: idMap.get(block.targetPageId) ?? "" }
+          : block
+      );
+      await tx.page.update({ where: { id: copy.id }, data: { blocks: jsonBlocks(blocks) } });
+    }
+    return flow;
+  });
+}
+
 export async function updateFlow(id: string, name: string, slug: string) {
   const prisma = getPrisma();
   const trimmed = name.trim().slice(0, 80);

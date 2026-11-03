@@ -45,6 +45,19 @@ export function BlockBody({
     );
   }
 
+  if (block.type === "spacer") {
+    return preview ? (
+      <div
+        style={{ height: block.height }}
+        className="flex items-center justify-center rounded-2xl border border-dashed border-noah-ink-hairline font-body text-xs text-noah-ink-dim"
+      >
+        Space · {block.height}px
+      </div>
+    ) : (
+      <div aria-hidden style={{ height: block.height }} />
+    );
+  }
+
   if (block.type === "heading") {
     if (!block.text && !preview) return null;
     const className =

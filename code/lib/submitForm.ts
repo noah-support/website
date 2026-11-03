@@ -109,6 +109,11 @@ export function mapFields(formName: FormName, rawFields: Record<string, unknown>
     else fields[rule.to] = fields[rule.to] ? `${fields[rule.to]}\n${value}` : value;
   }
 
+  return finishNames(fields, nameParts, otherLines);
+}
+
+// First and last name are joined into `name`, in the order they were asked.
+function finishNames(fields: Record<SchemaKey, string>, nameParts: string[], otherLines: string[]) {
   fields.name = nameParts.join(" ").replace(/\s+/g, " ").trim();
   fields.other = otherLines.join("\n");
   return fields;
@@ -133,9 +138,12 @@ export function buildPayload(
   };
 }
 
+// Fallback for answers stored without a key.
 const LANDING_LABELS: Record<string, Exclude<SchemaKey, "other">> = {
   name: "name",
   "full name": "name",
+  "first name": "name",
+  "last name": "name",
   email: "email",
   "email address": "email",
   "work email": "email",
@@ -157,7 +165,14 @@ export function landingFormName(slug: string) {
   return `landing_${cleaned || "flow"}`;
 }
 
-export function mapLandingAnswers(answers: { label: string; value: string }[]) {
+type LandingAnswer = { label: string; value: string; key?: string };
+
+function answerKey(answer: LandingAnswer): SchemaKey | undefined {
+  if (answer.key && (SCHEMA_KEYS as readonly string[]).includes(answer.key)) return answer.key as SchemaKey;
+  return LANDING_LABELS[answer.label.trim().toLowerCase()];
+}
+
+export function mapLandingAnswers(answers: LandingAnswer[]) {
   const fields = Object.fromEntries(SCHEMA_KEYS.map((key) => [key, ""])) as Record<SchemaKey, string>;
   const nameParts: string[] = [];
   const otherLines: string[] = [];
@@ -165,20 +180,18 @@ export function mapLandingAnswers(answers: { label: string; value: string }[]) {
   for (const answer of answers) {
     const value = answer.value.trim();
     if (!value) continue;
-    const key = LANDING_LABELS[answer.label.trim().toLowerCase()];
+    const key = answerKey(answer);
     if (key === "name") nameParts.push(value);
-    else if (key) fields[key] = fields[key] ? `${fields[key]}\n${value}` : value;
-    else otherLines.push(`${answer.label}: ${value === "yes" ? "yes" : value}`);
+    else if (key && key !== "other") fields[key] = fields[key] ? `${fields[key]}\n${value}` : value;
+    else otherLines.push(`${answer.label}: ${value}`);
   }
 
-  fields.name = nameParts.join(" ").replace(/\s+/g, " ").trim();
-  fields.other = otherLines.join("\n");
-  return fields;
+  return finishNames(fields, nameParts, otherLines);
 }
 
 export function buildLandingPayload(
   slug: string,
-  answers: { label: string; value: string }[],
+  answers: LandingAnswer[],
   utm: unknown,
   formName = ""
 ) {
@@ -196,7 +209,7 @@ export function buildLandingPayload(
 // Landing forms use the flow slug as the form name. Webhook failure does not throw.
 export async function submitLandingForm(
   slug: string,
-  answers: { label: string; value: string }[],
+  answers: LandingAnswer[],
   utm: unknown = {},
   formName = ""
 ) {

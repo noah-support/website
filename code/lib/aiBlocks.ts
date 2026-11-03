@@ -1,10 +1,11 @@
 import { blocksFromAi, type Block } from "@/lib/blocks";
 
 const SYSTEM = `You write sections for a landing page builder. Reply with JSON only:
-{"blocks":[{"type":"heading","level":2,"text":"..."},{"type":"text","text":"..."},{"type":"button","label":"...","targetPageId":""},{"type":"form","targetPageId":"","steps":[{"title":"Your details","fields":[{"type":"text","label":"Name","required":true}]}]}]}
+{"blocks":[{"type":"heading","level":2,"text":"..."},{"type":"text","text":"..."},{"type":"button","label":"...","targetPageId":""},{"type":"form","targetPageId":"","steps":[{"title":"Your details","fields":[{"type":"text","label":"Name","required":true,"split":true},{"type":"email","label":"Email","required":true}]}]}]}
 Allowed block types: heading, text, button, form.
 Allowed field types: text, email, phone, textarea, select, checkbox.
 Select fields need an options array of strings.
+For a person's name, use one text field with "split":true. It shows first and last name.
 Do not invent images or PDFs.
 Keep the copy short and specific to the request. At most 6 blocks.`;
 

@@ -5,6 +5,7 @@ import FlowDetails from "@/components/admin/FlowDetails";
 import {
   addPageAction,
   deletePageAction,
+  duplicateFlowAction,
   movePageAction,
   publishFlowAction,
   setFormTargetAction,
@@ -34,6 +35,9 @@ export default async function FlowEditorPage({
 
   return (
     <main className="mx-auto flex max-w-5xl flex-col gap-8 px-5 py-10">
+      <Link href="/admin/flows" className="w-fit font-body text-sm text-noah-ink-dim hover:text-noah-ink">
+        ← Back to flows
+      </Link>
       <FlowDetails id={flow.id} name={flow.name} slug={flow.slug} published={flow.published} error={error} />
 
       {warnings.length ? (
@@ -46,13 +50,21 @@ export default async function FlowEditorPage({
         </ul>
       ) : null}
 
-      <form action={publishFlowAction}>
-        <input type="hidden" name="id" value={flow.id} />
-        <input type="hidden" name="published" value={flow.published ? "false" : "true"} />
-        <button type="submit" className="h-12 rounded-full bg-noah-ink px-5 text-sm text-noah-cream">
-          {flow.published ? "Unpublish" : "Publish"}
-        </button>
-      </form>
+      <div className="flex flex-wrap gap-3">
+        <form action={publishFlowAction}>
+          <input type="hidden" name="id" value={flow.id} />
+          <input type="hidden" name="published" value={flow.published ? "false" : "true"} />
+          <button type="submit" className="h-12 rounded-full bg-noah-ink px-5 text-sm text-noah-cream">
+            {flow.published ? "Unpublish" : "Publish"}
+          </button>
+        </form>
+        <form action={duplicateFlowAction}>
+          <input type="hidden" name="id" value={flow.id} />
+          <button type="submit" className="h-12 rounded-full border border-noah-ink-hairline px-5 text-sm">
+            Duplicate flow
+          </button>
+        </form>
+      </div>
 
       <section className="flex flex-col gap-6">
         <div>

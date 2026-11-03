@@ -1,12 +1,32 @@
 export const FIELD_TYPES = ["text", "email", "phone", "textarea", "select", "checkbox"] as const;
 export type FieldType = (typeof FIELD_TYPES)[number];
 
+// Where an answer lands in the webhook body. "" picks a target from the type and label.
+export const FIELD_TARGETS = [
+  { value: "", label: "Automatic" },
+  { value: "name", label: "Name" },
+  { value: "email", label: "Email" },
+  { value: "phone", label: "Phone" },
+  { value: "company_name", label: "Company name" },
+  { value: "number_of_consultants", label: "Number of consultants" },
+  { value: "country", label: "Country" },
+  { value: "help_clients", label: "Help clients" },
+  { value: "in_what_regard", label: "In what regard" },
+  { value: "message", label: "Message" },
+  { value: "other", label: "Other" },
+] as const;
+export type FieldTarget = (typeof FIELD_TARGETS)[number]["value"];
+export type AnswerKey = Exclude<FieldTarget, "">;
+
 export type FormField = {
   id: string;
   type: FieldType;
   label: string;
   required: boolean;
   options: string[];
+  // Text only: shows two inputs, first name and last name.
+  split: boolean;
+  mapTo: FieldTarget;
 };
 
 export type FormStep = {
@@ -20,11 +40,16 @@ export type TextBlock = { id: string; type: "text"; text: string };
 export type ImageBlock = { id: string; type: "image"; assetId: string; alt: string };
 export type ButtonBlock = { id: string; type: "button"; label: string; targetPageId: string };
 export type PdfBlock = { id: string; type: "pdf"; assetId: string };
+export type SpacerBlock = { id: string; type: "spacer"; height: number };
+export const SPACER_MIN = 8;
+export const SPACER_MAX = 600;
 export type FormBlock = { id: string; type: "form"; steps: FormStep[]; targetPageId: string; formName: string };
-export const SECTION_TEMPLATES = ["hero", "feature", "compare", "process", "faq", "pricing", "proof", "cta"] as const;
+export const SECTION_TEMPLATES = ["hero", "feature", "video", "compare", "process", "faq", "pricing", "proof", "cta"] as const;
 export type SectionTemplate = (typeof SECTION_TEMPLATES)[number];
 export type SectionItem = { id: string; title: string; body: string };
 export type HeroMedia = "kpi" | "form" | "pdf";
+export type TextSide = "left" | "right";
+export type ImageFit = "fill" | "fit";
 export type SectionBlock = {
   id: string;
   type: "section";
@@ -38,13 +63,17 @@ export type SectionBlock = {
   pdfAssetId: string;
   imageAssetId: string;
   imageAlt: string;
+  textSide: TextSide;
+  imageFit: ImageFit;
+  videoUrl: string;
+  videoAssetId: string;
   items: SectionItem[];
 };
-export type Block = HeadingBlock | TextBlock | ImageBlock | ButtonBlock | PdfBlock | FormBlock | SectionBlock;
+export type Block = HeadingBlock | TextBlock | ImageBlock | ButtonBlock | PdfBlock | SpacerBlock | FormBlock | SectionBlock;
 
-export type StoredAnswer = { fieldId: string; label: string; value: string };
+export type StoredAnswer = { fieldId: string; label: string; value: string; key?: AnswerKey };
 
-const BLOCK_TYPES = ["heading", "text", "image", "button", "pdf", "form", "section"] as const;
+const BLOCK_TYPES = ["heading", "text", "image", "button", "pdf", "spacer", "form", "section"] as const;
 const MAX_BLOCKS = 40;
 const MAX_SECTION_ITEMS = 8;
 const MAX_STEPS = 8;
@@ -77,7 +106,40 @@ function cleanText(value: unknown, max: number) {
 }
 
 function field(type: FieldType, label: string, options: string[] = []): FormField {
-  return { id: newId(), type, label, required: type !== "checkbox", options };
+  return { id: newId(), type, label, required: type !== "checkbox", options, split: false, mapTo: "" };
+}
+
+export function nameField(): FormField {
+  return { ...field("text", "Name"), split: true };
+}
+
+export function splitFieldIds(fieldId: string) {
+  return { first: `${fieldId}:first`, last: `${fieldId}:last` };
+}
+
+const LABEL_TARGETS: [RegExp, AnswerKey][] = [
+  // First and last name both land in `name`, joined in form order.
+  [/\b(first|given|fore|last|family|sur)\s*name\b|^(your |full )?name$|^surname$|^(voor|achter)?naam$|^(pr[eé])?nom$/, "name"],
+  [/e-?mail/, "email"],
+  [/phone|mobile|telephone|tel\b/, "phone"],
+  [/company|organi[sz]ation|business name|employer/, "company_name"],
+  [/consultants/, "number_of_consultants"],
+  [/country/, "country"],
+  [/regard|topic|subject/, "in_what_regard"],
+  [/message|comment|question|anything else/, "message"],
+];
+
+// The webhook key for a field: the chosen target, else the type, else the label.
+export function fieldTarget(item: Pick<FormField, "type" | "label" | "mapTo">): AnswerKey {
+  if (item.mapTo) return item.mapTo;
+  if (item.type === "email") return "email";
+  if (item.type === "phone") return "phone";
+  if (item.type === "checkbox") return "other";
+  const label = item.label.trim().toLowerCase();
+  for (const [pattern, key] of LABEL_TARGETS) {
+    if (pattern.test(label)) return key;
+  }
+  return "other";
 }
 
 export function starterBlocks(): Block[] {
@@ -92,7 +154,7 @@ export function starterBlocks(): Block[] {
         {
           id: newId(),
           title: "Your details",
-          fields: [field("text", "Name"), field("email", "Email")],
+          fields: [nameField(), field("email", "Email")],
         },
       ],
     },
@@ -156,6 +218,10 @@ export function createSection(template: SectionTemplate): SectionBlock {
     pdfAssetId: "",
     imageAssetId: "",
     imageAlt: "",
+    textSide: "left" as const,
+    imageFit: "fit" as const,
+    videoUrl: "",
+    videoAssetId: "",
     items: [] as SectionItem[],
   };
   if (template === "hero") {
@@ -174,6 +240,14 @@ export function createSection(template: SectionTemplate): SectionBlock {
       eyebrow: "AI-based interviews",
       title: "Grounded in reality",
       body: "Every recommendation traces back to something a real person on your team said. Not a generic template.",
+    };
+  }
+  if (template === "video") {
+    return {
+      ...base,
+      eyebrow: "See it",
+      title: "Noah in two minutes.",
+      body: "",
     };
   }
   if (template === "compare") {
@@ -254,13 +328,15 @@ export function createBlock(type: Block["type"]): Block | null {
       return { id: newId(), type, label: "Continue", targetPageId: "" };
     case "pdf":
       return { id: newId(), type, assetId: "" };
+    case "spacer":
+      return { id: newId(), type, height: 64 };
     case "form":
       return {
         id: newId(),
         type,
         formName: "",
         targetPageId: "",
-        steps: [{ id: newId(), title: "Your details", fields: [field("email", "Email")] }],
+        steps: [{ id: newId(), title: "Your details", fields: [nameField(), field("email", "Email")] }],
       };
     default:
       return null;
@@ -270,10 +346,11 @@ export function createBlock(type: Block["type"]): Block | null {
 export function sectionFields(template: SectionTemplate) {
   return {
     eyebrow: template !== "compare",
-    body: template === "hero" || template === "feature" || template === "process" || template === "cta",
+    body: template === "hero" || template === "feature" || template === "process" || template === "cta" || template === "video",
     button: template === "hero" || template === "cta",
     heroChoice: template === "hero",
     image: template === "feature",
+    video: template === "video",
     items: template === "compare" || template === "process" || template === "faq" || template === "pricing" || template === "proof",
   };
 }
@@ -288,7 +365,8 @@ export function sectionItemLabels(template: SectionTemplate) {
 
 export const SECTION_CATALOG: { template: SectionTemplate; name: string; detail: string }[] = [
   { template: "hero", name: "Hero", detail: "Full-screen opening, one button, and a KPI, form, or PDF." },
-  { template: "feature", name: "Feature", detail: "Text beside an image." },
+  { template: "feature", name: "Feature", detail: "Text beside an image, on either side." },
+  { template: "video", name: "Video", detail: "A YouTube video or a file in a glass screen." },
   { template: "compare", name: "Two options", detail: "A heading and two glass cards." },
   { template: "process", name: "Process", detail: "Numbered steps under a heading." },
   { template: "faq", name: "FAQ", detail: "Questions that open to an answer." },
@@ -324,6 +402,9 @@ export function pageWarnings(blocks: Block[]) {
       !safeButtonHref(block.buttonHref)
     ) {
       warnings.push("A button has words but no working link.");
+    }
+    if (block.type === "section" && block.template === "video" && !block.videoAssetId && !youtubeId(block.videoUrl)) {
+      warnings.push("The video section needs a YouTube link or an uploaded video.");
     }
     if (block.type === "button" && block.label && !block.targetPageId) {
       warnings.push("A button has no page to open.");
@@ -406,6 +487,10 @@ export function parseBlocks(input: unknown): { ok: true; blocks: Block[] } | { o
       });
       continue;
     }
+    if (raw.type === "spacer") {
+      blocks.push({ id, type: "spacer", height: spacerHeight(raw.height) });
+      continue;
+    }
     if (raw.type === "pdf") {
       blocks.push({ id, type: "pdf", assetId: cleanText(raw.assetId, 80) });
       continue;
@@ -431,6 +516,12 @@ export function parseBlocks(input: unknown): { ok: true; blocks: Block[] } | { o
   }
 
   return { ok: true, blocks };
+}
+
+export function spacerHeight(value: unknown) {
+  const height = Math.round(Number(value));
+  if (!Number.isFinite(height)) return 64;
+  return Math.min(SPACER_MAX, Math.max(SPACER_MIN, height));
 }
 
 function parseSection(
@@ -468,6 +559,10 @@ function parseSection(
       pdfAssetId: cleanText(raw.pdfAssetId, 80),
       imageAssetId: cleanText(raw.imageAssetId, 80),
       imageAlt: cleanText(raw.imageAlt, 180),
+      textSide: raw.textSide === "right" ? "right" : "left",
+      imageFit: raw.imageFit === "fill" ? "fill" : "fit",
+      videoUrl: cleanText(raw.videoUrl, 500),
+      videoAssetId: cleanText(raw.videoAssetId, 80),
       items,
     },
   };
@@ -527,7 +622,12 @@ function parseField(
       return { ok: false, error: "A dropdown needs between 1 and 30 options." };
     }
   }
-  return { ok: true, field: { id, type, label, required: raw.required === true, options } };
+  const mapTo = FIELD_TARGETS.some((target) => target.value === raw.mapTo) ? (raw.mapTo as FieldTarget) : "";
+  const split = type === "text" && raw.split === true;
+  return {
+    ok: true,
+    field: { id, type, label, required: raw.required === true, options, split, mapTo: split ? "" : mapTo },
+  };
 }
 
 export function blocksFromAi(input: unknown): { ok: true; blocks: Block[] } | { ok: false; error: string } {
@@ -545,7 +645,7 @@ export function blocksFromAi(input: unknown): { ok: true; blocks: Block[] } | { 
 
   const prepared = list.slice(0, 8).flatMap((item) => {
     if (!isRecord(item) || typeof item.type !== "string") return [];
-    if (item.type === "image" || item.type === "pdf" || item.type === "section") return [];
+    if (item.type === "image" || item.type === "pdf" || item.type === "section" || item.type === "spacer") return [];
     if (!BLOCK_TYPES.includes(item.type as (typeof BLOCK_TYPES)[number])) return [];
     return [stampIds(item)];
   });
@@ -633,11 +733,21 @@ export function validateAnswers(
 
   for (const step of form.steps) {
     for (const item of step.fields) {
+      if (item.split) {
+        const ids = splitFieldIds(item.id);
+        const first = provided.get(ids.first) ?? "";
+        const last = provided.get(ids.last) ?? "";
+        if (item.required && (!first || !last)) fieldErrors[item.id] = "Enter your first and last name.";
+        answers.push({ fieldId: ids.first, label: "First name", value: first, key: "name" });
+        answers.push({ fieldId: ids.last, label: "Last name", value: last, key: "name" });
+        continue;
+      }
+      const key = fieldTarget(item);
       const value = provided.get(item.id) ?? "";
       if (item.type === "checkbox") {
         const checked = value === "yes";
         if (item.required && !checked) fieldErrors[item.id] = "This is required.";
-        answers.push({ fieldId: item.id, label: item.label, value: checked ? "yes" : "" });
+        answers.push({ fieldId: item.id, label: item.label, value: checked ? "yes" : "", key });
         continue;
       }
       if (item.required && !value) {
@@ -650,7 +760,7 @@ export function validateAnswers(
       } else if (value && item.type === "select" && !item.options.includes(value)) {
         fieldErrors[item.id] = "Choose one of the options.";
       }
-      answers.push({ fieldId: item.id, label: item.label, value });
+      answers.push({ fieldId: item.id, label: item.label, value, key });
     }
   }
 
@@ -658,4 +768,27 @@ export function validateAnswers(
     return { ok: false, error: "Check the highlighted fields.", fieldErrors };
   }
   return { ok: true, answers };
+}
+
+// Accepts youtube.com/watch, youtu.be, /embed, /shorts and /live links.
+export function youtubeId(value: string) {
+  const text = value.trim();
+  if (!text) return "";
+  let url: URL;
+  try {
+    url = new URL(text);
+  } catch {
+    return "";
+  }
+  const host = url.hostname.replace(/^www\.|^m\./, "");
+  let id = "";
+  if (host === "youtu.be") id = url.pathname.slice(1).split("/")[0] ?? "";
+  else if (host === "youtube.com" || host === "youtube-nocookie.com") {
+    if (url.pathname === "/watch") id = url.searchParams.get("v") ?? "";
+    else {
+      const match = url.pathname.match(/^\/(?:embed|shorts|live)\/([^/]+)/);
+      id = match?.[1] ?? "";
+    }
+  }
+  return /^[\w-]{6,20}$/.test(id) ? id : "";
 }

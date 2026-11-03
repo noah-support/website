@@ -134,3 +134,24 @@ test("landing payload uses the flow slug as the form name", () => {
   assert.equal(buildLandingPayload("spring-offer", [], {}, "Web Summit 2026").form_name, "Web Summit 2026");
   assert.deepEqual(payload.utm, { utm_source: "ad" });
 });
+
+test("landing answers use their stored key before the label", () => {
+  const fields = mapLandingAnswers([
+    { label: "First name", value: "charlotte", key: "name" },
+    { label: "Last name", value: "driessen", key: "name" },
+    { label: "Business email", value: "charlotte@acme.com", key: "email" },
+    { label: "Budget", value: "10k", key: "other" },
+  ]);
+  assert.equal(fields.name, "charlotte driessen");
+  assert.equal(fields.email, "charlotte@acme.com");
+  assert.equal(fields.other, "Budget: 10k");
+});
+
+test("old answers without a key join first and last name by label", () => {
+  const fields = mapLandingAnswers([
+    { label: "First Name", value: "Jane" },
+    { label: "Last Name", value: "Doe" },
+  ]);
+  assert.equal(fields.name, "Jane Doe");
+  assert.equal(fields.other, "");
+});

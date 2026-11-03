@@ -23,6 +23,8 @@ import { BlockBody, type FlowPageLink } from "@/components/landing/BlockBody";
 import {
   createBlock,
   createSection,
+  FIELD_TARGETS,
+  fieldTarget,
   formBlock,
   newId,
   pageWarnings,
@@ -30,11 +32,15 @@ import {
   sectionFields,
   sectionItemLabels,
   type Block,
+  type FieldTarget,
   type FieldType,
   type FormField,
   type FormStep,
   type SectionBlock,
   type SectionTemplate,
+  SPACER_MAX,
+  SPACER_MIN,
+  spacerHeight,
 } from "@/lib/blocks";
 
 const INSERTS: { type: Block["type"]; label: string }[] = [
@@ -43,6 +49,7 @@ const INSERTS: { type: Block["type"]; label: string }[] = [
   { type: "image", label: "Image" },
   { type: "button", label: "Button" },
   { type: "pdf", label: "PDF" },
+  { type: "spacer", label: "Spacer" },
   { type: "form", label: "Form" },
 ];
 
@@ -538,6 +545,26 @@ function Inspector({
           onUploaded={(assetId) => onChange({ ...block, assetId })}
         />
       ) : null}
+      {block.type === "spacer" ? (
+        <label className="flex flex-col gap-2 text-sm">
+          Height in pixels
+          <input
+            type="number"
+            className="contact-input"
+            min={SPACER_MIN}
+            max={SPACER_MAX}
+            step={8}
+            value={block.height}
+            onChange={(event) =>
+              onChange({ ...block, height: Math.min(SPACER_MAX, Math.max(0, Math.round(Number(event.target.value) || 0))) })
+            }
+            onBlur={() => onChange({ ...block, height: spacerHeight(block.height) })}
+          />
+          <span className="font-body text-xs text-noah-ink-dim">
+            Between {SPACER_MIN} and {SPACER_MAX}.
+          </span>
+        </label>
+      ) : null}
       {block.type === "button" ? (
         <>
           <TextLabel label="Button text" value={block.label} onChange={(label) => onChange({ ...block, label })} />
@@ -618,12 +645,59 @@ function SectionInspector({ block, onChange }: { block: SectionBlock; onChange: 
       ) : null}
       {fields.image ? (
         <>
+          <label className="flex flex-col gap-2 text-sm">
+            Text side
+            <select
+              className="contact-input contact-select"
+              value={block.textSide}
+              onChange={(event) => onChange({ ...block, textSide: event.target.value === "right" ? "right" : "left" })}
+            >
+              <option value="left">Left</option>
+              <option value="right">Right</option>
+            </select>
+          </label>
           <FileField
             accept="image/jpeg,image/png,image/webp,image/gif"
             label={block.imageAssetId ? "Replace image" : "Upload image"}
             onUploaded={(imageAssetId) => onChange({ ...block, imageAssetId })}
           />
+          <label className="flex flex-col gap-2 text-sm">
+            Image display
+            <select
+              className="contact-input contact-select"
+              value={block.imageFit}
+              onChange={(event) => onChange({ ...block, imageFit: event.target.value === "fill" ? "fill" : "fit" })}
+            >
+              <option value="fit">Fit: the whole image, with space around it</option>
+              <option value="fill">Fill: covers its half, edge to edge</option>
+            </select>
+          </label>
           <TextLabel label="Image description" value={block.imageAlt} onChange={(imageAlt) => onChange({ ...block, imageAlt })} />
+        </>
+      ) : null}
+      {fields.video ? (
+        <>
+          <TextLabel
+            label="YouTube link"
+            value={block.videoUrl}
+            placeholder="https://www.youtube.com/watch?v="
+            onChange={(videoUrl) => onChange({ ...block, videoUrl })}
+          />
+          <p className="font-body text-xs leading-relaxed text-noah-ink-dim">Or upload a video. An uploaded file is used before the link.</p>
+          <FileField
+            accept="video/mp4,video/webm"
+            label={block.videoAssetId ? "Replace video" : "Upload video"}
+            onUploaded={(videoAssetId) => onChange({ ...block, videoAssetId })}
+          />
+          {block.videoAssetId ? (
+            <button
+              type="button"
+              className="text-left text-sm text-noah-orange"
+              onClick={() => onChange({ ...block, videoAssetId: "" })}
+            >
+              Remove uploaded video
+            </button>
+          ) : null}
         </>
       ) : null}
       {fields.items
@@ -713,7 +787,7 @@ function FormInspector({
             onClick={() =>
               updateStep(step.id, {
                 ...step,
-                fields: [...step.fields, { id: newId(), type: "text", label: "New field", required: false, options: [] }],
+                fields: [...step.fields, { id: newId(), type: "text", label: "New field", required: false, options: [], split: false, mapTo: "" }],
               })
             }
           >
@@ -741,7 +815,7 @@ function FormInspector({
               {
                 id: newId(),
                 title: `Step ${block.steps.length + 1}`,
-                fields: [{ id: newId(), type: "text", label: "New field", required: false, options: [] }],
+                fields: [{ id: newId(), type: "text", label: "New field", required: false, options: [], split: false, mapTo: "" }],
               },
             ],
           })
@@ -775,6 +849,7 @@ function FieldEditor({
             onChange({
               ...field,
               type,
+              split: type === "text" ? field.split : false,
               options: type === "select" && field.options.length === 0 ? ["Option 1", "Option 2"] : field.options,
             });
           }}
@@ -795,6 +870,38 @@ function FieldEditor({
         />
         Required
       </label>
+      {field.type === "text" ? (
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={field.split}
+            onChange={(event) => onChange({ ...field, split: event.target.checked, mapTo: "" })}
+          />
+          Separate name fields
+        </label>
+      ) : null}
+      {field.split ? (
+        <p className="font-body text-xs leading-relaxed text-noah-ink-dim">
+          Shows First name and Last name. HubSpot gets both joined as the name.
+        </p>
+      ) : (
+        <label className="flex flex-col gap-2 text-sm">
+          Sends to HubSpot as
+          <select
+            className="contact-input contact-select"
+            value={field.mapTo}
+            onChange={(event) => onChange({ ...field, mapTo: event.target.value as FieldTarget })}
+          >
+            {FIELD_TARGETS.map((target) => (
+              <option key={target.value} value={target.value}>
+                {target.value
+                  ? target.label
+                  : `Automatic (${FIELD_TARGETS.find((item) => item.value === fieldTarget({ ...field, mapTo: "" }))?.label})`}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
       {field.type === "select" ? (
         <TextLabel
           label="Options, one per line"

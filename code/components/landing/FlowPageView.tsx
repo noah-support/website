@@ -27,9 +27,9 @@ export default function FlowPageView({
   );
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full flex-col min-[1400px]:w-[80%]">
+    <main className="flex min-h-dvh w-full flex-col">
       {locked ? (
-        <div className="flex w-full flex-col gap-4 px-6 py-16">
+        <div className="mx-auto flex w-full flex-col gap-4 px-6 py-16 min-[1400px]:w-[80%]">
           <h1 className="font-display text-4xl text-noah-ink">Submit the form to continue</h1>
           <a href={`/f/${flowSlug}`} className="text-sm text-noah-ink underline underline-offset-4">
             Back to the start
@@ -38,7 +38,7 @@ export default function FlowPageView({
       ) : (
         blocks.map((block) => {
           if (block.type === "form" && formInHero) return null;
-          return block.type === "section" ? (
+          return block.type === "section" || block.type === "spacer" ? (
             <BlockBody
               key={block.id}
               block={block}
@@ -50,7 +50,7 @@ export default function FlowPageView({
               form={form}
             />
           ) : (
-            <div key={block.id} className="w-full px-6 py-4 first:pt-16 last:pb-16">
+            <div key={block.id} className="mx-auto w-full px-6 py-4 first:pt-16 last:pb-16 min-[1400px]:w-[80%]">
               <BlockBody
                 block={block}
                 flowSlug={flowSlug}

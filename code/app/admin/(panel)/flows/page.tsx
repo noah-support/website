@@ -1,6 +1,6 @@
 import Link from "next/link";
 import DeleteFlow from "@/components/admin/DeleteFlow";
-import { createFlowAction, setTshirtsAction } from "@/lib/adminActions";
+import { createFlowAction, duplicateFlowAction, setTshirtsAction } from "@/lib/adminActions";
 import { listFlows } from "@/lib/flows";
 import { tshirtsFlowId } from "@/lib/settings";
 
@@ -87,6 +87,12 @@ export default async function FlowsPage({
               </div>
               <div className="flex flex-wrap items-center justify-end gap-4">
                 <DeleteFlow id={flow.id} name={flow.name} />
+                <form action={duplicateFlowAction}>
+                  <input type="hidden" name="id" value={flow.id} />
+                  <button type="submit" className="h-10 rounded-full border border-noah-ink-hairline px-4 text-sm">
+                    Duplicate
+                  </button>
+                </form>
                 <Link
                   href={`/admin/flows/${flow.id}`}
                   className="inline-flex h-10 items-center rounded-full bg-noah-ink px-4 text-sm text-noah-cream"

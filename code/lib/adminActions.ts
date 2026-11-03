@@ -7,6 +7,7 @@ import {
   createFlow,
   deleteFlow,
   deletePage,
+  duplicateFlow,
   movePage,
   setFormTarget,
   setPublished,
@@ -29,6 +30,13 @@ export async function createFlowAction(formData: FormData) {
   await requireAdmin();
   const flow = await createFlow(String(formData.get("name") ?? ""));
   if (!flow) redirect("/admin/flows?error=database");
+  redirect(`/admin/flows/${flow.id}`);
+}
+
+export async function duplicateFlowAction(formData: FormData) {
+  await requireAdmin();
+  const flow = await duplicateFlow(String(formData.get("id") ?? ""));
+  if (!flow) redirect(`/admin/flows?error=${encodeURIComponent("That flow could not be copied.")}`);
   redirect(`/admin/flows/${flow.id}`);
 }
 

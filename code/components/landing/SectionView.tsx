@@ -1,6 +1,6 @@
 import HeroKpi from "@/components/HeroKpi";
 import LandingForm from "@/components/landing/LandingForm";
-import { safeButtonHref, type FormBlock, type SectionBlock, type SectionItem } from "@/lib/blocks";
+import { safeButtonHref, youtubeId, type FormBlock, type SectionBlock, type SectionItem } from "@/lib/blocks";
 
 function lines(value: string) {
   return value
@@ -119,9 +119,15 @@ function Hero({
 }
 
 function Feature({ block, preview }: { block: SectionBlock; preview: boolean }) {
+  const textRight = block.textSide === "right";
+  const fill = block.imageFit === "fill";
   return (
     <section className="grid grid-cols-1 border-y border-noah-ink-hairline lg:grid-cols-2">
-      <div className="flex items-center px-6 py-16 sm:px-12 lg:border-r lg:border-noah-ink-hairline">
+      <div
+        className={`flex items-center px-6 py-16 sm:px-12 lg:border-noah-ink-hairline ${
+          textRight ? "lg:order-2 lg:border-l" : "lg:border-r"
+        }`}
+      >
         <div className="max-w-lg">
           {block.eyebrow ? (
             <p className="font-body text-xs uppercase tracking-[0.18em] text-noah-ink-dim">{block.eyebrow}</p>
@@ -130,8 +136,64 @@ function Feature({ block, preview }: { block: SectionBlock; preview: boolean }) 
           {block.body ? <p className="mt-5 font-body text-noah-ink-dim sm:text-lg">{block.body}</p> : null}
         </div>
       </div>
-      <div className="flex items-center px-6 py-10 sm:px-12">
-        <SlotImage assetId={block.imageAssetId} alt={block.imageAlt} preview={preview} className="min-h-64" />
+      {fill && block.imageAssetId ? (
+        <div
+          role={block.imageAlt ? "img" : undefined}
+          aria-label={block.imageAlt || undefined}
+          aria-hidden={block.imageAlt ? undefined : true}
+          className={`min-h-72 bg-cover bg-center lg:min-h-0 ${textRight ? "lg:order-1" : ""}`}
+          style={{ backgroundImage: `url(/api/assets/${block.imageAssetId})` }}
+        />
+      ) : (
+        <div className={`flex items-center px-6 py-10 sm:px-12 ${textRight ? "lg:order-1" : ""}`}>
+          <SlotImage assetId={block.imageAssetId} alt={block.imageAlt} preview={preview} className="min-h-64" />
+        </div>
+      )}
+    </section>
+  );
+}
+
+function Video({ block, preview }: { block: SectionBlock; preview: boolean }) {
+  const youtube = youtubeId(block.videoUrl);
+  return (
+    <section className="px-6 py-24 sm:px-12 sm:py-32">
+      {block.eyebrow || block.title || block.body ? (
+        <div className="mx-auto max-w-3xl text-center">
+          {block.eyebrow ? (
+            <p className="font-body text-xs uppercase tracking-[0.18em] text-noah-ink-dim">{block.eyebrow}</p>
+          ) : null}
+          {block.title ? (
+            <h2 className="mt-4 font-display text-4xl leading-tight tracking-tight text-noah-ink sm:text-5xl">{block.title}</h2>
+          ) : null}
+          {block.body ? <p className="mx-auto mt-5 max-w-xl font-body text-noah-ink-dim sm:text-lg">{block.body}</p> : null}
+        </div>
+      ) : null}
+      <div className="glass mx-auto mt-12 w-full max-w-5xl p-2 sm:p-3" style={{ borderRadius: "2rem" }}>
+        <div className="relative aspect-video w-full overflow-hidden rounded-[1.5rem] bg-noah-ink">
+          {block.videoAssetId ? (
+            <video
+              src={`/api/assets/${block.videoAssetId}`}
+              controls
+              playsInline
+              preload="metadata"
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          ) : youtube ? (
+            <iframe
+              src={`https://www.youtube-nocookie.com/embed/${youtube}?rel=0`}
+              title={block.title || "Video"}
+              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="strict-origin-when-cross-origin"
+              className="absolute inset-0 h-full w-full border-0"
+            />
+          ) : preview ? (
+            <div className="absolute inset-0 flex items-center justify-center text-sm text-noah-cream/70">
+              Add a YouTube link or upload a video
+            </div>
+          ) : null}
+        </div>
       </div>
     </section>
   );
@@ -333,6 +395,7 @@ export default function SectionView({
     );
   }
   if (block.template === "feature") return <Feature block={block} preview={preview} />;
+  if (block.template === "video") return <Video block={block} preview={preview} />;
   if (block.template === "compare") return <Compare block={block} />;
   if (block.template === "process") return <Process block={block} />;
   if (block.template === "faq") return <Faq block={block} />;

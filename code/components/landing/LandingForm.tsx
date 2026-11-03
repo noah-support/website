@@ -3,7 +3,7 @@
 import Script from "next/script";
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { emailFieldError, type FormBlock } from "@/lib/blocks";
+import { emailFieldError, splitFieldIds, type FormBlock } from "@/lib/blocks";
 import { readUtm } from "@/lib/utm";
 
 type RecaptchaApi = {
@@ -48,12 +48,12 @@ export default function LandingForm({
   const current = form.steps[step] ?? form.steps[0];
   const last = step >= form.steps.length - 1;
 
-  function setValue(id: string, value: string) {
+  function setValue(id: string, value: string, errorId = id) {
     setValues((prev) => ({ ...prev, [id]: value }));
     setFieldErrors((prev) => {
-      if (!prev[id]) return prev;
+      if (!prev[errorId]) return prev;
       const next = { ...prev };
-      delete next[id];
+      delete next[errorId];
       return next;
     });
   }
@@ -61,6 +61,13 @@ export default function LandingForm({
   function currentErrors() {
     const errors: Record<string, string> = {};
     for (const field of current.fields) {
+      if (field.split) {
+        const ids = splitFieldIds(field.id);
+        if (field.required && (!values[ids.first]?.trim() || !values[ids.last]?.trim())) {
+          errors[field.id] = "Enter your first and last name.";
+        }
+        continue;
+      }
       const value = values[field.id] ?? "";
       if (field.required && (field.type === "checkbox" ? value !== "yes" : !value.trim())) {
         errors[field.id] = "This is required.";
@@ -108,7 +115,14 @@ export default function LandingForm({
           recaptchaToken,
           utm: readUtm(),
           answers: form.steps.flatMap((item) =>
-            item.fields.map((field) => ({ fieldId: field.id, value: values[field.id] ?? "" }))
+            item.fields.flatMap((field) => {
+              if (!field.split) return [{ fieldId: field.id, value: values[field.id] ?? "" }];
+              const ids = splitFieldIds(field.id);
+              return [
+                { fieldId: ids.first, value: values[ids.first] ?? "" },
+                { fieldId: ids.last, value: values[ids.last] ?? "" },
+              ];
+            })
           ),
         }),
       });
@@ -166,7 +180,30 @@ export default function LandingForm({
           const error = fieldErrors[field.id];
           return (
             <div key={field.id} className="flex flex-col gap-2">
-              {field.type === "checkbox" ? (
+              {field.split ? (
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  {(["first", "last"] as const).map((part) => {
+                    const valueId = splitFieldIds(field.id)[part];
+                    return (
+                      <div key={part} className="flex flex-col gap-2">
+                        <label htmlFor={`${inputId}-${part}`} className="font-body text-sm text-noah-ink">
+                          {part === "first" ? "First name" : "Last name"}
+                          {field.required ? " *" : ""}
+                        </label>
+                        <input
+                          id={`${inputId}-${part}`}
+                          className="contact-input"
+                          type="text"
+                          autoComplete={part === "first" ? "given-name" : "family-name"}
+                          value={values[valueId] ?? ""}
+                          onChange={(event) => setValue(valueId, event.target.value, field.id)}
+                          aria-invalid={Boolean(error)}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : field.type === "checkbox" ? (
                 <label htmlFor={inputId} className="flex items-start gap-3 font-body text-sm text-noah-ink">
                   <input
                     id={inputId}

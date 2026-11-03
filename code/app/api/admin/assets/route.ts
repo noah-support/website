@@ -5,7 +5,9 @@ import { putAsset } from "@/lib/storage";
 export const runtime = "nodejs";
 
 const MAX_BYTES = 15 * 1024 * 1024;
-const ALLOWED = new Set(["image/jpeg", "image/png", "image/webp", "image/gif", "application/pdf"]);
+const MAX_VIDEO_BYTES = 300 * 1024 * 1024;
+const VIDEO = new Set(["video/mp4", "video/webm"]);
+const ALLOWED = new Set(["image/jpeg", "image/png", "image/webp", "image/gif", "application/pdf", ...VIDEO]);
 
 export async function POST(request: Request) {
   if (!(await isAdmin())) {
@@ -23,10 +25,11 @@ export async function POST(request: Request) {
   const file = form.get("file");
   if (!(file instanceof File)) return Response.json({ error: "Upload a file." }, { status: 400 });
   if (!ALLOWED.has(file.type)) {
-    return Response.json({ error: "Use a JPEG, PNG, WebP, GIF, or PDF." }, { status: 400 });
+    return Response.json({ error: "Use a JPEG, PNG, WebP, GIF, PDF, MP4, or WebM." }, { status: 400 });
   }
-  if (file.size <= 0 || file.size > MAX_BYTES) {
-    return Response.json({ error: "Files need to be under 15 MB." }, { status: 400 });
+  const video = VIDEO.has(file.type);
+  if (file.size <= 0 || file.size > (video ? MAX_VIDEO_BYTES : MAX_BYTES)) {
+    return Response.json({ error: video ? "Videos need to be under 300 MB." : "Files need to be under 15 MB." }, { status: 400 });
   }
 
   const filename = file.name.replace(/[^\w.\- ]+/g, "").slice(0, 120) || "file";
@@ -35,7 +38,7 @@ export async function POST(request: Request) {
   });
   const key = `assets/${asset.id}`;
   try {
-    await putAsset(key, Buffer.from(await file.arrayBuffer()), file.type);
+    await putAsset(key, file);
     await prisma.asset.update({ where: { id: asset.id }, data: { key } });
   } catch (error) {
     console.error("[assets]", error);
