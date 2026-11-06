@@ -72,7 +72,7 @@ export default function LandingForm({
       if (field.required && (field.type === "checkbox" ? value !== "yes" : !value.trim())) {
         errors[field.id] = "This is required.";
       } else if (field.type === "email" && value.trim()) {
-        const message = emailFieldError(value);
+        const message = emailFieldError(value, { allowPublic: field.allowPublicEmail });
         if (message) errors[field.id] = message;
       }
     }

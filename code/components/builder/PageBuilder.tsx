@@ -801,7 +801,7 @@ function FormInspector({
             onClick={() =>
               updateStep(step.id, {
                 ...step,
-                fields: [...step.fields, { id: newId(), type: "text", label: "New field", required: false, options: [], split: false, mapTo: "" }],
+                fields: [...step.fields, { id: newId(), type: "text", label: "New field", required: false, options: [], split: false, mapTo: "", allowPublicEmail: false }],
               })
             }
           >
@@ -829,7 +829,7 @@ function FormInspector({
               {
                 id: newId(),
                 title: `Step ${block.steps.length + 1}`,
-                fields: [{ id: newId(), type: "text", label: "New field", required: false, options: [], split: false, mapTo: "" }],
+                fields: [{ id: newId(), type: "text", label: "New field", required: false, options: [], split: false, mapTo: "", allowPublicEmail: false }],
               },
             ],
           })
@@ -884,6 +884,16 @@ function FieldEditor({
         />
         Required
       </label>
+      {field.type === "email" ? (
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={field.allowPublicEmail}
+            onChange={(event) => onChange({ ...field, allowPublicEmail: event.target.checked })}
+          />
+          Allow public email domains (gmail.com, outlook.com, …)
+        </label>
+      ) : null}
       {field.type === "text" ? (
         <label className="flex items-center gap-2 text-sm">
           <input

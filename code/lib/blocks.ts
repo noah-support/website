@@ -27,6 +27,8 @@ export type FormField = {
   // Text only: shows two inputs, first name and last name.
   split: boolean;
   mapTo: FieldTarget;
+  // Email only: accept public domains such as gmail.com.
+  allowPublicEmail: boolean;
 };
 
 export type FormStep = {
@@ -114,7 +116,16 @@ function cleanText(value: unknown, max: number) {
 }
 
 function field(type: FieldType, label: string, options: string[] = []): FormField {
-  return { id: newId(), type, label, required: type !== "checkbox", options, split: false, mapTo: "" };
+  return {
+    id: newId(),
+    type,
+    label,
+    required: type !== "checkbox",
+    options,
+    split: false,
+    mapTo: "",
+    allowPublicEmail: false,
+  };
 }
 
 export function nameField(): FormField {
@@ -635,9 +646,19 @@ function parseField(
   }
   const mapTo = FIELD_TARGETS.some((target) => target.value === raw.mapTo) ? (raw.mapTo as FieldTarget) : "";
   const split = type === "text" && raw.split === true;
+  const allowPublicEmail = type === "email" && raw.allowPublicEmail === true;
   return {
     ok: true,
-    field: { id, type, label, required: raw.required === true, options, split, mapTo: split ? "" : mapTo },
+    field: {
+      id,
+      type,
+      label,
+      required: raw.required === true,
+      options,
+      split,
+      mapTo: split ? "" : mapTo,
+      allowPublicEmail,
+    },
   };
 }
 
@@ -717,13 +738,13 @@ const PUBLIC_EMAIL_DOMAINS = new Set([
   "duck.com",
 ]);
 
-export function emailFieldError(value: string) {
+export function emailFieldError(value: string, options: { allowPublic?: boolean } = {}) {
   const email = value.trim().toLowerCase();
   if (!email) return "";
   if (!EMAIL.test(email)) return "Enter a valid email.";
   if (email.includes("test")) return "Use a business email. A test address cannot continue.";
   const domain = email.slice(email.lastIndexOf("@") + 1);
-  if (PUBLIC_EMAIL_DOMAINS.has(domain)) return "Use a business email, not a public one.";
+  if (!options.allowPublic && PUBLIC_EMAIL_DOMAINS.has(domain)) return "Use a business email, not a public one.";
   return "";
 }
 
@@ -764,7 +785,7 @@ export function validateAnswers(
       if (item.required && !value) {
         fieldErrors[item.id] = "This is required.";
       } else if (value && item.type === "email") {
-        const message = emailFieldError(value);
+        const message = emailFieldError(value, { allowPublic: item.allowPublicEmail });
         if (message) fieldErrors[item.id] = message;
       } else if (value && item.type === "phone" && value.replace(/\D/g, "").length < 6) {
         fieldErrors[item.id] = "Enter a phone number.";

@@ -37,6 +37,8 @@ test("an email field only accepts a business address", () => {
   assert.equal(emailFieldError("ada@company.com"), "");
   assert.equal(emailFieldError("test@company.com").includes("test"), true);
   assert.equal(emailFieldError("ada@gmail.com").includes("public"), true);
+  assert.equal(emailFieldError("ada@gmail.com", { allowPublic: true }), "");
+  assert.equal(emailFieldError("test@gmail.com", { allowPublic: true }).includes("test"), true);
   const form = createBlock("form");
   assert.ok(form && form.type === "form");
   if (!form || form.type !== "form") return;
