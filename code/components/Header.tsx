@@ -10,14 +10,26 @@ import {
   scrollToTop,
 } from "@/lib/scrollToHash";
 
-const NAV_ITEMS = [
+type NavItem = { label: string; href: string; blink?: boolean };
+
+const NAV_ITEMS: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "Pricing", href: "/#pricing" },
   { label: "Industries", href: "/industry" },
   { label: "Why Noah", href: "/why-noah" },
   { label: "Knowledge", href: "/knowledge" },
+  { label: "Jobs", href: "/jobs", blink: true },
   { label: "Questions", href: "/contact" },
 ];
+
+function BlinkDot({ className = "h-2 w-2" }: { className?: string }) {
+  return (
+    <span aria-hidden className={`relative inline-flex shrink-0 ${className}`}>
+      <span className="absolute inset-0 rounded-full bg-noah-orange opacity-75 animate-ping motion-reduce:animate-none" />
+      <span className="relative h-full w-full rounded-full bg-noah-orange" />
+    </span>
+  );
+}
 
 function isCurrent(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
@@ -132,13 +144,14 @@ export default function Header() {
                     event.preventDefault();
                     scrollToHash(item.href);
                   }}
-                  className={`whitespace-nowrap rounded-full px-2 py-2 font-display text-base tracking-[0.01em] transition-colors xl:px-3 xl:text-base ${
+                  className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2 py-2 font-display text-base tracking-[0.01em] transition-colors xl:px-3 xl:text-base ${
                     current
                       ? "text-noah-orange"
                       : "text-noah-ink hover:text-noah-orange"
                   }`}
                 >
                   {item.label}
+                  {item.blink ? <BlinkDot /> : null}
                 </Link>
               );
             })}
@@ -225,6 +238,9 @@ export default function Header() {
               <span className="min-w-0 whitespace-normal text-balance">
                 {item.label}
               </span>
+              {item.blink ? (
+                <BlinkDot className="h-3 w-3 self-center sm:h-4 sm:w-4" />
+              ) : null}
             </Link>
           ))}
         </nav>

@@ -39,16 +39,33 @@ export default async function JobPostPage({
         <div className="mx-auto max-w-3xl">
           <Link
             href="/jobs"
-            className="glass glass-pill glass-orange mb-8 inline-flex h-12 items-center px-6 text-sm font-medium text-noah-cream"
+            className="glass glass-pill mb-8 inline-flex h-12 items-center px-6 text-sm font-medium text-noah-ink transition-colors hover:text-noah-orange"
           >
             Back
           </Link>
           <h1 className="mt-2 font-display text-4xl leading-[1.12] tracking-tight text-noah-ink sm:text-5xl">
             {post.title}
           </h1>
+          <div className="mt-8">
+            <Link
+              href="/f/recruitment"
+              className="glass glass-pill glass-orange inline-flex h-12 items-center px-6 text-sm font-medium text-noah-cream"
+            >
+              Apply Here
+            </Link>
+          </div>
         </div>
 
         <ConsentHtml className="wp-content mx-auto mt-12 max-w-3xl" html={post.content} />
+
+        <div className="mx-auto mt-12 max-w-3xl">
+          <Link
+            href="/f/recruitment"
+            className="glass glass-pill glass-orange inline-flex h-12 items-center px-6 text-sm font-medium text-noah-cream"
+          >
+            Apply Here
+          </Link>
+        </div>
       </article>
     </main>
   );
