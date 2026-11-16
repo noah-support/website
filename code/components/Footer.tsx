@@ -106,6 +106,12 @@ export default function Footer() {
               Terms &amp; conditions
             </Link>
             <Link
+              href="/privacy"
+              className="transition-colors hover:text-noah-ink"
+            >
+              Privacy policy
+            </Link>
+            <Link
               href="/cookies"
               className="transition-colors hover:text-noah-ink"
             >

@@ -31,6 +31,7 @@ const STATIC_ROUTES: {
   { path: "/contact", priority: 0.6, changeFrequency: "monthly" },
   { path: "/cookies", priority: 0.3, changeFrequency: "yearly" },
   { path: "/terms", priority: 0.3, changeFrequency: "yearly" },
+  { path: "/privacy", priority: 0.3, changeFrequency: "yearly" },
 ];
 
 function absolute(path: string) {
