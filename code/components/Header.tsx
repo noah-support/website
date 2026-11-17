@@ -3,6 +3,7 @@
 import { useEffect, useState, type MouseEvent } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import AnnouncementBanner from "./AnnouncementBanner";
 import MenuIcon from "./MenuIcon";
 import {
   isSamePageSection,
@@ -201,6 +202,9 @@ export default function Header() {
             </button>
           </div>
         </div>
+        {pathname === "/" ? (
+          <AnnouncementBanner hidden={compact || open} />
+        ) : null}
       </header>
 
       <div

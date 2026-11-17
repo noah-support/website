@@ -2052,3 +2052,147 @@ body {
     background: Highlight;
   }
 }
+
+/* Home announcement: orange liquid-glass pill floating under the nav.
+   Pops in after the loader, then every few seconds a light sheen sweeps
+   across it, a ring pulses out and the arrow nudges. Folds away once the
+   header goes compact. */
+.announce-wrap {
+  position: absolute;
+  inset-inline: 0;
+  top: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: -0.25rem;
+  padding-inline: 1.25rem;
+  pointer-events: none;
+  transition:
+    opacity 400ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 500ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 400ms ease;
+}
+
+.announce-wrap[data-hidden] {
+  opacity: 0;
+  transform: translateY(-0.75rem) scale(0.96);
+  filter: blur(4px);
+}
+
+.announce-shell {
+  position: relative;
+  display: inline-flex;
+  pointer-events: auto;
+  animation: announce-in 1000ms cubic-bezier(0.34, 1.56, 0.64, 1) 1.3s both;
+}
+
+.announce-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  border: 1.5px solid var(--noah-orange);
+  opacity: 0;
+  pointer-events: none;
+  animation: announce-ring 4s cubic-bezier(0.22, 1, 0.36, 1) 2.4s infinite;
+}
+
+.announce.glass-orange {
+  --glass-tint-top: rgba(235, 92, 28, 0.88);
+  --glass-tint-bottom: rgba(235, 92, 28, 0.72);
+  --glass-shadow: 0 14px 34px rgba(235, 92, 28, 0.3);
+  text-shadow: 0 1px 1px rgba(120, 40, 10, 0.25);
+}
+
+.announce.glass-orange:hover {
+  --glass-tint-top: rgba(235, 92, 28, 0.96);
+  --glass-tint-bottom: rgba(235, 92, 28, 0.84);
+}
+
+.announce::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.5) 48%,
+    rgba(255, 240, 228, 0.7) 50%,
+    rgba(255, 255, 255, 0.5) 52%,
+    transparent 65%
+  );
+  transform: translateX(-110%);
+  animation: announce-sheen 4s ease-in-out 2.4s infinite;
+}
+
+.announce > * {
+  position: relative;
+  z-index: 1;
+}
+
+.announce-arrow {
+  animation: announce-nudge 4s ease-in-out 2.4s infinite;
+}
+
+@keyframes announce-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-1.25rem) scale(0.8);
+    filter: blur(8px);
+  }
+  60% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+@keyframes announce-sheen {
+  0% {
+    transform: translateX(-110%);
+  }
+  30%,
+  100% {
+    transform: translateX(110%);
+  }
+}
+
+@keyframes announce-ring {
+  0% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  45%,
+  100% {
+    opacity: 0;
+    transform: scale(1.06, 1.4);
+  }
+}
+
+@keyframes announce-nudge {
+  0%,
+  10%,
+  30%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .announce-shell,
+  .announce-ring,
+  .announce::after,
+  .announce-arrow {
+    animation: none;
+  }
+  .announce-wrap {
+    transition: none;
+  }
+}
